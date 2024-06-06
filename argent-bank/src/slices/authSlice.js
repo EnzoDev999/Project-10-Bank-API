@@ -8,7 +8,7 @@ const authSlice = createSlice({
     isAuthenticated: null,
     loading: true,
     error: null,
-    user: null, // Ajouter l'état pour les informations utilisateur
+    user: null,
   },
   reducers: {
     loginSuccess: (state, action) => {
@@ -39,11 +39,26 @@ const authSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    profileUpdateSuccess: (state, action) => {
+      state.user = action.payload;
+      state.loading = false;
+    },
+    profileUpdateFailed: (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
   },
 });
 
-export const { loginSuccess, loginFail, logout, userLoaded, userLoadFailed } =
-  authSlice.actions;
+export const {
+  loginSuccess,
+  loginFail,
+  logout,
+  userLoaded,
+  userLoadFailed,
+  profileUpdateSuccess,
+  profileUpdateFailed,
+} = authSlice.actions;
 
 export const login = (username, password) => async (dispatch) => {
   try {
@@ -54,10 +69,8 @@ export const login = (username, password) => async (dispatch) => {
         password: password,
       }
     );
-    console.log("Login response:", response); // Ajoute ceci
     dispatch(loginSuccess(response.data.body.token));
   } catch (error) {
-    console.log("Login error:", error); // Ajoute ceci
     dispatch(loginFail(error.response.data.message));
   }
 };
@@ -73,12 +86,32 @@ export const loadUser = () => async (dispatch, getState) => {
         },
       }
     );
-    console.log("Load user response:", response); // Ajoute ceci
     dispatch(userLoaded(response.data.body));
   } catch (error) {
-    console.log("Load user error:", error); // Ajoute ceci
     dispatch(userLoadFailed(error.response.data.message));
   }
 };
+
+export const updateUserProfile =
+  (firstName, lastName) => async (dispatch, getState) => {
+    try {
+      const token = getState().auth.token;
+      const response = await axios.put(
+        "http://localhost:3001/api/v1/user/profile",
+        {
+          firstName,
+          lastName,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      dispatch(profileUpdateSuccess(response.data.body));
+    } catch (error) {
+      dispatch(profileUpdateFailed(error.response.data.message));
+    }
+  };
 
 export default authSlice.reducer;

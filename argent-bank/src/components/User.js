@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadUser } from "../slices/authSlice";
+import { loadUser, updateUserProfile } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import argentBankLogo from "../assets/img/argentBankLogo.png";
 
@@ -9,9 +9,11 @@ const User = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const [editMode, setEditMode] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   useEffect(() => {
-    console.log("isAuthenticated:", isAuthenticated);
     if (!isAuthenticated) {
       navigate("/sign-in");
     } else {
@@ -19,7 +21,18 @@ const User = () => {
     }
   }, [isAuthenticated, dispatch, navigate]);
 
-  console.log("User:", user);
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.firstName);
+      setLastName(user.lastName);
+    }
+  }, [user]);
+
+  const handleUpdateProfile = (e) => {
+    e.preventDefault();
+    dispatch(updateUserProfile(firstName, lastName));
+    setEditMode(false);
+  };
 
   if (!user) {
     return <div>Loading...</div>;
@@ -54,8 +67,36 @@ const User = () => {
             <br />
             {user.firstName} {user.lastName}!
           </h1>
-          <button className="edit-button">Edit Name</button>
+          <button
+            className="edit-button"
+            onClick={() => setEditMode(!editMode)}
+          >
+            Edit Name
+          </button>
         </div>
+        {editMode && (
+          <form onSubmit={handleUpdateProfile}>
+            <div>
+              <label htmlFor="firstName">First Name</label>
+              <input
+                type="text"
+                id="firstName"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="lastName">Last Name</label>
+              <input
+                type="text"
+                id="lastName"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
+            <button type="submit">Save</button>
+          </form>
+        )}
         <h2 className="sr-only">Accounts</h2>
         <section className="account">
           <div className="account-content-wrapper">
