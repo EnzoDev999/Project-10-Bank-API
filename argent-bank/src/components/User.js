@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "../main.css"; // Importer le fichier CSS associé
+import argentBankLogo from "../assets/img/argentBankLogo.png";
+import "../main.css";
 
 const User = () => {
   return (
@@ -9,7 +10,7 @@ const User = () => {
         <Link className="main-nav-logo" to="/">
           <img
             className="main-nav-logo-image"
-            src="./img/argentBankLogo.png"
+            src={argentBankLogo}
             alt="Argent Bank Logo"
           />
           <h1 className="sr-only">Argent Bank</h1>
