@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactions } from "../slices/transactionSlice";
+import AddTransaction from "./AddTransaction";
 
 const TransactionsList = () => {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ const TransactionsList = () => {
   return (
     <section>
       <h2>Transactions</h2>
+      <AddTransaction />
       {content}
     </section>
   );
