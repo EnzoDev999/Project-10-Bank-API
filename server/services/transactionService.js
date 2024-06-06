@@ -1,4 +1,4 @@
-const Transaction = require("../database/models/transactionModel");
+const Transaction = require("../database/models/transactionModel.js");
 const jwt = require("jsonwebtoken");
 
 module.exports.getAllTransactions = async (req) => {
