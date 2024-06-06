@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUser } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
+import argentBankLogo from "../assets/img/argentBankLogo.png";
 
 const User = () => {
   const dispatch = useDispatch();
@@ -10,7 +11,7 @@ const User = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   useEffect(() => {
-    console.log("isAuthenticated:", isAuthenticated); // Ajoute ceci
+    console.log("isAuthenticated:", isAuthenticated);
     if (!isAuthenticated) {
       navigate("/sign-in");
     } else {
@@ -18,7 +19,7 @@ const User = () => {
     }
   }, [isAuthenticated, dispatch, navigate]);
 
-  console.log("User:", user); // Ajoute ceci
+  console.log("User:", user);
 
   if (!user) {
     return <div>Loading...</div>;
@@ -30,7 +31,7 @@ const User = () => {
         <a className="main-nav-logo" href="/">
           <img
             className="main-nav-logo-image"
-            src="../assets/img/argentBankLogo.png"
+            src={argentBankLogo}
             alt="Argent Bank Logo"
           />
           <h1 className="sr-only">Argent Bank</h1>
