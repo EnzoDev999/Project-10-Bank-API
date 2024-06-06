@@ -8,6 +8,7 @@ const authSlice = createSlice({
     isAuthenticated: null,
     loading: true,
     error: null,
+    user: null, // Ajouter l'état pour les informations utilisateur
   },
   reducers: {
     loginSuccess: (state, action) => {
@@ -27,12 +28,22 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.loading = false;
       state.error = null;
+      state.user = null;
       localStorage.removeItem("token");
+    },
+    userLoaded: (state, action) => {
+      state.user = action.payload;
+      state.loading = false;
+    },
+    userLoadFailed: (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
     },
   },
 });
 
-export const { loginSuccess, loginFail, logout } = authSlice.actions;
+export const { loginSuccess, loginFail, logout, userLoaded, userLoadFailed } =
+  authSlice.actions;
 
 export const login = (username, password) => async (dispatch) => {
   try {
@@ -43,9 +54,30 @@ export const login = (username, password) => async (dispatch) => {
         password: password,
       }
     );
+    console.log("Login response:", response); // Ajoute ceci
     dispatch(loginSuccess(response.data.body.token));
   } catch (error) {
+    console.log("Login error:", error); // Ajoute ceci
     dispatch(loginFail(error.response.data.message));
+  }
+};
+
+export const loadUser = () => async (dispatch, getState) => {
+  try {
+    const token = getState().auth.token;
+    const response = await axios.get(
+      "http://localhost:3001/api/v1/user/profile",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("Load user response:", response); // Ajoute ceci
+    dispatch(userLoaded(response.data.body));
+  } catch (error) {
+    console.log("Load user error:", error); // Ajoute ceci
+    dispatch(userLoadFailed(error.response.data.message));
   }
 };
 

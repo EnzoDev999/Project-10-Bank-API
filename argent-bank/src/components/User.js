@@ -1,29 +1,49 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import argentBankLogo from "../assets/img/argentBankLogo.png";
-import "../main.css";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loadUser } from "../slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const User = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  useEffect(() => {
+    console.log("isAuthenticated:", isAuthenticated); // Ajoute ceci
+    if (!isAuthenticated) {
+      navigate("/sign-in");
+    } else {
+      dispatch(loadUser());
+    }
+  }, [isAuthenticated, dispatch, navigate]);
+
+  console.log("User:", user); // Ajoute ceci
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <nav className="main-nav">
-        <Link className="main-nav-logo" to="/">
+        <a className="main-nav-logo" href="/">
           <img
             className="main-nav-logo-image"
-            src={argentBankLogo}
+            src="../assets/img/argentBankLogo.png"
             alt="Argent Bank Logo"
           />
           <h1 className="sr-only">Argent Bank</h1>
-        </Link>
+        </a>
         <div>
-          <Link className="main-nav-item" to="/user">
+          <a className="main-nav-item" href="/sign-in">
             <i className="fa fa-user-circle"></i>
-            Tony
-          </Link>
-          <Link className="main-nav-item" to="/">
+            {user.firstName} {user.lastName}
+          </a>
+          <a className="main-nav-item" href="/">
             <i className="fa fa-sign-out"></i>
             Sign Out
-          </Link>
+          </a>
         </div>
       </nav>
       <main className="main bg-dark">
@@ -31,7 +51,7 @@ const User = () => {
           <h1>
             Welcome back
             <br />
-            Tony Jarvis!
+            {user.firstName} {user.lastName}!
           </h1>
           <button className="edit-button">Edit Name</button>
         </div>
