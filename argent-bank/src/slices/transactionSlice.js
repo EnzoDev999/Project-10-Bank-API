@@ -34,6 +34,39 @@ export const addTransaction = createAsyncThunk(
   }
 );
 
+export const updateTransaction = createAsyncThunk(
+  "transactions/updateTransaction",
+  async (transaction, { getState }) => {
+    const token = getState().auth.token;
+    const response = await axios.put(
+      `http://localhost:3001/api/v1/transactions/${transaction.id}`,
+      transaction,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.body;
+  }
+);
+
+export const deleteTransaction = createAsyncThunk(
+  "transactions/deleteTransaction",
+  async (transactionId, { getState }) => {
+    const token = getState().auth.token;
+    await axios.delete(
+      `http://localhost:3001/api/v1/transactions/${transactionId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return transactionId;
+  }
+);
+
 const transactionSlice = createSlice({
   name: "transactions",
   initialState: {
@@ -57,6 +90,17 @@ const transactionSlice = createSlice({
       })
       .addCase(addTransaction.fulfilled, (state, action) => {
         state.transactions.push(action.payload);
+      })
+      .addCase(updateTransaction.fulfilled, (state, action) => {
+        const index = state.transactions.findIndex(
+          (transaction) => transaction._id === action.payload._id
+        );
+        state.transactions[index] = action.payload;
+      })
+      .addCase(deleteTransaction.fulfilled, (state, action) => {
+        state.transactions = state.transactions.filter(
+          (transaction) => transaction._id !== action.payload
+        );
       });
   },
 });

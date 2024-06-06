@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactions } from "../slices/transactionSlice";
 import AddTransaction from "./AddTransaction";
+import TransactionItem from "./TransactionItem";
 
 const TransactionsList = () => {
   const dispatch = useDispatch();
@@ -24,9 +25,7 @@ const TransactionsList = () => {
       content = (
         <ul>
           {transactions.map((transaction) => (
-            <li key={transaction.id}>
-              {transaction.description}: {transaction.amount}
-            </li>
+            <TransactionItem key={transaction._id} transaction={transaction} />
           ))}
         </ul>
       );
@@ -38,7 +37,7 @@ const TransactionsList = () => {
   }
 
   return (
-    <section>
+    <section className="transactions">
       <h2>Transactions</h2>
       <AddTransaction />
       {content}

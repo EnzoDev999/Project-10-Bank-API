@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUser, updateUserProfile } from "../slices/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import argentBankLogo from "../assets/img/argentBankLogo.png";
 
 const User = () => {
@@ -105,7 +105,9 @@ const User = () => {
             <p className="account-amount-description">Available Balance</p>
           </div>
           <div className="account-content-wrapper cta">
-            <button className="transaction-button">View transactions</button>
+            <Link className="transaction-button" to="/transactions">
+              View transactions
+            </Link>
           </div>
         </section>
         <section className="account">
@@ -115,7 +117,9 @@ const User = () => {
             <p className="account-amount-description">Available Balance</p>
           </div>
           <div className="account-content-wrapper cta">
-            <button className="transaction-button">View transactions</button>
+            <Link className="transaction-button" to="/transactions">
+              View transactions
+            </Link>
           </div>
         </section>
         <section className="account">
@@ -125,7 +129,9 @@ const User = () => {
             <p className="account-amount-description">Current Balance</p>
           </div>
           <div className="account-content-wrapper cta">
-            <button className="transaction-button">View transactions</button>
+            <Link className="transaction-button" to="/transactions">
+              View transactions
+            </Link>
           </div>
         </section>
       </main>
