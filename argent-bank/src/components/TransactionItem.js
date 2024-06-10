@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import {
   updateTransaction,
   deleteTransaction,
+  fetchTransactionsForCurrentMonth,
 } from "../slices/transactionSlice";
 import "./Transactions.css";
 
@@ -13,15 +14,17 @@ const TransactionItem = ({ transaction }) => {
   const [description, setDescription] = useState(transaction.description);
   const dispatch = useDispatch();
 
-  const handleUpdate = () => {
-    dispatch(
+  const handleUpdate = async () => {
+    await dispatch(
       updateTransaction({ id: transaction._id, amount, type, description })
     );
+    await dispatch(fetchTransactionsForCurrentMonth()); // Recharger les transactions après la mise à jour
     setIsEditing(false);
   };
 
-  const handleDelete = () => {
-    dispatch(deleteTransaction(transaction._id));
+  const handleDelete = async () => {
+    await dispatch(deleteTransaction(transaction._id));
+    await dispatch(fetchTransactionsForCurrentMonth()); // Recharger les transactions après la suppression
   };
 
   return (
@@ -48,8 +51,14 @@ const TransactionItem = ({ transaction }) => {
         </div>
       ) : (
         <div>
+          <span>{transaction.date}</span>
+          <span>{transaction.description}</span>
+          <span>${transaction.amount}</span>
           <span>
-            {transaction.description}: {transaction.amount}
+            Balance: $
+            {transaction.balanceAfterTransaction !== undefined
+              ? transaction.balanceAfterTransaction
+              : "N/A"}
           </span>
           <button onClick={() => setIsEditing(true)}>Edit</button>
           <button onClick={handleDelete}>Delete</button>

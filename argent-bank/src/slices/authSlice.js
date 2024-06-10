@@ -5,10 +5,11 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     token: localStorage.getItem("token"),
-    isAuthenticated: null,
+    isAuthenticated: localStorage.getItem("token") ? true : null,
     loading: true,
     error: null,
     user: null,
+    status: "idle",
   },
   reducers: {
     loginSuccess: (state, action) => {
@@ -34,18 +35,13 @@ const authSlice = createSlice({
     userLoaded: (state, action) => {
       state.user = action.payload;
       state.loading = false;
+      state.status = "succeeded";
+      state.balance = action.payload.balance;
     },
     userLoadFailed: (state, action) => {
       state.error = action.payload;
       state.loading = false;
-    },
-    profileUpdateSuccess: (state, action) => {
-      state.user = action.payload;
-      state.loading = false;
-    },
-    profileUpdateFailed: (state, action) => {
-      state.error = action.payload;
-      state.loading = false;
+      state.status = "failed";
     },
   },
 });
@@ -78,6 +74,10 @@ export const login = (username, password) => async (dispatch) => {
 export const loadUser = () => async (dispatch, getState) => {
   try {
     const token = getState().auth.token;
+    if (!token) {
+      dispatch(userLoadFailed("No token found"));
+      return;
+    }
     const response = await axios.get(
       "http://localhost:3001/api/v1/user/profile",
       {

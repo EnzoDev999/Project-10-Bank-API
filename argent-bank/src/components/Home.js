@@ -10,7 +10,7 @@ const Home = () => {
   return (
     <div>
       <nav className="main-nav">
-        <Link className="main-nav-logo" to="/">
+        <Link className="main-nav-logo" to="/user">
           <img
             className="main-nav-logo-image"
             src={argentBankLogo}
@@ -19,7 +19,7 @@ const Home = () => {
           <h1 className="sr-only">Argent Bank</h1>
         </Link>
         <div>
-          <Link className="main-nav-item" to="/sign-in">
+          <Link className="main-nav-item" to="/user">
             <i className="fa fa-user-circle"></i>
             Sign In
           </Link>

@@ -1,50 +1,65 @@
-const Transaction = require("../database/models/transactionModel.js");
-const jwt = require("jsonwebtoken");
+const Transaction = require("../database/models/transactionModel");
 
-module.exports.getAllTransactions = async (req) => {
-  const token = req.headers.authorization.split("Bearer ")[1];
-  const decoded = jwt.verify(
-    token,
-    process.env.SECRET_KEY || "default-secret-key"
-  );
-  const transactions = await Transaction.find({ userId: decoded.id });
+module.exports.createTransaction = async (serviceData) => {
+  try {
+    // Fetch the last transaction to get the previous balance
+    const lastTransaction = await Transaction.findOne({
+      userId: serviceData.userId,
+    }).sort({ date: -1 });
+    const previousBalance = lastTransaction ? lastTransaction.balance : 0;
+    const newBalance = previousBalance + serviceData.amount;
 
-  // Retourne un tableau vide si aucune transaction n'est trouvée
-  return transactions.length ? transactions : [];
-};
+    const transaction = new Transaction({
+      ...serviceData,
+      balance: newBalance,
+    });
 
-module.exports.getTransactionById = async (transactionId) => {
-  return await Transaction.findById(transactionId);
-};
+    let result = await transaction.save();
 
-module.exports.createTransaction = async (req) => {
-  const token = req.headers.authorization.split("Bearer ")[1];
-  const decoded = jwt.verify(
-    token,
-    process.env.SECRET_KEY || "default-secret-key"
-  );
-  const transaction = new Transaction({
-    userId: decoded.id,
-    amount: req.body.amount,
-    type: req.body.type,
-    description: req.body.description,
-    date: new Date(),
-  });
-  return await transaction.save();
-};
+    if (
+      !result.amount ||
+      !result.type ||
+      !result.description ||
+      !result.balance
+    ) {
+      console.error("Transaction created with missing fields:", result);
+      throw new Error("Transaction created with missing fields");
+    }
 
-module.exports.updateTransaction = async (req) => {
-  return await Transaction.findByIdAndUpdate(
-    req.params.transactionId,
-    {
-      amount: req.body.amount,
-      type: req.body.type,
-      description: req.body.description,
-    },
-    { new: true }
-  );
+    return result;
+  } catch (error) {
+    console.error("Error in transactionService.js", error);
+    throw new Error(error);
+  }
 };
 
 module.exports.deleteTransaction = async (transactionId) => {
-  return await Transaction.findByIdAndDelete(transactionId);
+  try {
+    const transactionToDelete = await Transaction.findById(transactionId);
+    if (!transactionToDelete) {
+      throw new Error("Transaction not found!");
+    }
+
+    await Transaction.deleteOne({ _id: transactionId });
+
+    // Update the balance of subsequent transactions
+    const subsequentTransactions = await Transaction.find({
+      userId: transactionToDelete.userId,
+      date: { $gt: transactionToDelete.date },
+    }).sort({ date: 1 });
+
+    let previousBalance =
+      transactionToDelete.balance - transactionToDelete.amount;
+
+    for (const txn of subsequentTransactions) {
+      txn.balance = previousBalance + txn.amount;
+      previousBalance = txn.balance;
+      await txn.save();
+    }
+
+    return transactionToDelete;
+  } catch (error) {
+    console.error("Error in transactionService.js", error);
+    throw new Error(error);
+  }
 };

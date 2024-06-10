@@ -1,25 +1,50 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const fetchTransactions = createAsyncThunk(
-  "transactions/fetchTransactions",
-  async (_, { getState }) => {
+export const fetchTransactionsForCurrentMonth = createAsyncThunk(
+  "transactions/fetchTransactionsForCurrentMonth",
+  async (_, { getState, rejectWithValue }) => {
     const token = getState().auth.token;
-    const response = await axios.get(
-      "http://localhost:3001/api/v1/transactions",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return response.data.body;
+    const user = getState().auth.user;
+
+    if (!user) {
+      console.log("User not loaded");
+      return rejectWithValue("User not loaded");
+    }
+
+    try {
+      const response = await axios.get(
+        "http://localhost:3001/api/v1/transactions/current-month",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const transactions = response.data.data;
+
+      let currentBalance = user.balance;
+      const transactionsWithBalance = transactions.map((transaction, index) => {
+        const transactionWithBalance = {
+          ...transaction,
+          balance: currentBalance,
+        };
+        currentBalance -= transaction.amount;
+        return transactionWithBalance;
+      });
+
+      console.log("Transactions with balance:", transactionsWithBalance);
+      return transactionsWithBalance;
+    } catch (error) {
+      console.log("Error fetching transactions:", error);
+      return rejectWithValue(error.response.data.message);
+    }
   }
 );
 
 export const addTransaction = createAsyncThunk(
   "transactions/addTransaction",
-  async (transaction, { getState }) => {
+  async (transaction, { getState, dispatch }) => {
     const token = getState().auth.token;
     const response = await axios.post(
       "http://localhost:3001/api/v1/transactions",
@@ -30,13 +55,14 @@ export const addTransaction = createAsyncThunk(
         },
       }
     );
+    await dispatch(fetchTransactionsForCurrentMonth());
     return response.data.body;
   }
 );
 
 export const updateTransaction = createAsyncThunk(
   "transactions/updateTransaction",
-  async (transaction, { getState }) => {
+  async (transaction, { getState, dispatch }) => {
     const token = getState().auth.token;
     const response = await axios.put(
       `http://localhost:3001/api/v1/transactions/${transaction.id}`,
@@ -47,6 +73,7 @@ export const updateTransaction = createAsyncThunk(
         },
       }
     );
+    await dispatch(fetchTransactionsForCurrentMonth());
     return response.data.body;
   }
 );
@@ -77,30 +104,25 @@ const transactionSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTransactions.pending, (state) => {
+      .addCase(fetchTransactionsForCurrentMonth.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(fetchTransactions.fulfilled, (state, action) => {
+      .addCase(fetchTransactionsForCurrentMonth.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.transactions = action.payload;
       })
-      .addCase(fetchTransactions.rejected, (state, action) => {
+      .addCase(fetchTransactionsForCurrentMonth.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
       .addCase(addTransaction.fulfilled, (state, action) => {
-        state.transactions.push(action.payload);
+        state.status = "idle"; // Recharger la liste des transactions
       })
       .addCase(updateTransaction.fulfilled, (state, action) => {
-        const index = state.transactions.findIndex(
-          (transaction) => transaction._id === action.payload._id
-        );
-        state.transactions[index] = action.payload;
+        state.status = "idle"; // Recharger la liste des transactions
       })
       .addCase(deleteTransaction.fulfilled, (state, action) => {
-        state.transactions = state.transactions.filter(
-          (transaction) => transaction._id !== action.payload
-        );
+        state.status = "idle"; // Recharger la liste des transactions
       });
   },
 });

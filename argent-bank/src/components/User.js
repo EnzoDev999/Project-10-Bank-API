@@ -1,6 +1,7 @@
+// User.js
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadUser, updateUserProfile } from "../slices/authSlice";
+import { loadUser, updateUserProfile, logout } from "../slices/authSlice";
 import { useNavigate, Link } from "react-router-dom";
 import argentBankLogo from "../assets/img/argentBankLogo.png";
 
@@ -34,6 +35,10 @@ const User = () => {
     setEditMode(false);
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   if (!user) {
     return <div>Loading...</div>;
   }
@@ -54,7 +59,7 @@ const User = () => {
             <i className="fa fa-user-circle"></i>
             {user.firstName} {user.lastName}
           </a>
-          <a className="main-nav-item" href="/">
+          <a className="main-nav-item" href="/" onClick={handleLogout}>
             <i className="fa fa-sign-out"></i>
             Sign Out
           </a>
@@ -101,7 +106,7 @@ const User = () => {
         <section className="account">
           <div className="account-content-wrapper">
             <h3 className="account-title">Argent Bank Checking (x8349)</h3>
-            <p className="account-amount">$2,082.79</p>
+            <p className="account-amount">${user.balance}</p>
             <p className="account-amount-description">Available Balance</p>
           </div>
           <div className="account-content-wrapper cta">

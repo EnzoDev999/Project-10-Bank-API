@@ -8,46 +8,33 @@ const AddTransaction = () => {
   const [description, setDescription] = useState("");
   const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(addTransaction({ amount, type, description }));
-    setAmount("");
-    setType("");
-    setDescription("");
+    await dispatch(addTransaction({ amount, type, description }));
+    // Rafraîchir la page après l'ajout d'une transaction
+    window.location.reload();
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="amount">Amount</label>
-        <input
-          type="number"
-          id="amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="type">Type</label>
-        <input
-          type="text"
-          id="type"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="description">Description</label>
-        <input
-          type="text"
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        />
-      </div>
+      <input
+        type="number"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        placeholder="Amount"
+      />
+      <input
+        type="text"
+        value={type}
+        onChange={(e) => setType(e.target.value)}
+        placeholder="Type"
+      />
+      <input
+        type="text"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder="Description"
+      />
       <button type="submit">Add Transaction</button>
     </form>
   );
