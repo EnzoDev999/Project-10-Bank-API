@@ -18,13 +18,13 @@ const TransactionItem = ({ transaction }) => {
     await dispatch(
       updateTransaction({ id: transaction._id, amount, type, description })
     );
-    await dispatch(fetchTransactionsForCurrentMonth()); // Recharger les transactions après la mise à jour
+    await dispatch(fetchTransactionsForCurrentMonth(transaction.accountType)); // Recharger les transactions après la mise à jour
     setIsEditing(false);
   };
 
   const handleDelete = async () => {
     await dispatch(deleteTransaction(transaction._id));
-    await dispatch(fetchTransactionsForCurrentMonth()); // Recharger les transactions après la suppression
+    await dispatch(fetchTransactionsForCurrentMonth(transaction.accountType)); // Recharger les transactions après la suppression
   };
 
   return (

@@ -21,6 +21,7 @@ module.exports.getTransactionsForCurrentMonth = async (req, res) => {
     const token = req.headers.authorization.split("Bearer ")[1].trim();
     const decodedToken = jwt.decode(token);
     const userId = decodedToken.id;
+    const { accountType } = req.query;
 
     const now = new Date();
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -32,29 +33,17 @@ module.exports.getTransactionsForCurrentMonth = async (req, res) => {
 
     const transactions = await Transaction.find({
       userId,
+      accountType,
       date: {
         $gte: firstDayOfMonth,
         $lt: firstDayOfNextMonth,
       },
     });
 
-    console.log("Transactions:", transactions); // Ajoutez cette ligne pour vérifier les transactions récupérées
-
     res.status(200).json({ status: "success", data: transactions });
   } catch (error) {
     console.error("Error fetching transactions for current month:", error);
     res.status(400).json({ status: "fail", message: error.message });
-  }
-};
-
-module.exports.getTransactionById = async (req, res) => {
-  try {
-    const transaction = await transactionService.getTransactionById(
-      req.params.transactionId
-    );
-    res.status(200).json({ body: transaction });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
   }
 };
 
@@ -64,16 +53,26 @@ module.exports.createTransaction = async (req, res) => {
     const decodedToken = jwt.decode(token);
     const userId = decodedToken.id;
 
-    const { amount, type, description, date } = req.body;
+    const { amount, type, description, date, accountType } = req.body;
 
-    // Récupérer l'utilisateur pour obtenir la balance actuelle
+    // Find the user's current balance for the given account type
     const user = await User.findById(userId);
-    if (!user) {
-      throw new Error("User not found");
+    let currentBalance;
+    switch (accountType) {
+      case "checking":
+        currentBalance = user.checkingBalance;
+        break;
+      case "savings":
+        currentBalance = user.savingsBalance;
+        break;
+      case "credit":
+        currentBalance = user.creditBalance;
+        break;
+      default:
+        return res.status(400).json({ message: "Invalid account type" });
     }
 
-    // Calculer la nouvelle balance après la transaction
-    const newBalance = user.balance - amount;
+    const newBalance = currentBalance - amount;
 
     const newTransaction = new Transaction({
       userId,
@@ -81,14 +80,24 @@ module.exports.createTransaction = async (req, res) => {
       type,
       description,
       date,
-      balanceAfterTransaction: newBalance, // Enregistrer la nouvelle balance
+      balanceAfterTransaction: newBalance,
+      accountType,
     });
 
-    // Enregistrer la transaction
     const savedTransaction = await newTransaction.save();
 
-    // Mettre à jour la balance de l'utilisateur
-    user.balance = newBalance;
+    // Update user's balance
+    switch (accountType) {
+      case "checking":
+        user.checkingBalance = newBalance;
+        break;
+      case "savings":
+        user.savingsBalance = newBalance;
+        break;
+      case "credit":
+        user.creditBalance = newBalance;
+        break;
+    }
     await user.save();
 
     res.status(201).json({ status: "success", data: savedTransaction });
@@ -138,7 +147,17 @@ module.exports.deleteTransaction = async (req, res) => {
 
     // Mettre à jour la balance de l'utilisateur
     const user = await User.findById(userId);
-    user.balance += amountToAdd;
+    switch (transactionToDelete.accountType) {
+      case "checking":
+        user.checkingBalance += amountToAdd;
+        break;
+      case "savings":
+        user.savingsBalance += amountToAdd;
+        break;
+      case "credit":
+        user.creditBalance += amountToAdd;
+        break;
+    }
     await user.save();
 
     res.status(204).send();

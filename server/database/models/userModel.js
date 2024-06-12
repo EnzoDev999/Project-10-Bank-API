@@ -6,7 +6,18 @@ const userSchema = new mongoose.Schema(
     password: String,
     firstName: String,
     lastName: String,
-    balance: { type: Number, default: Math.floor(Math.random() * 3001) + 2000 }, // Ajoute un solde de départ aléatoire entre 2000 et 5000
+    checkingBalance: {
+      type: Number,
+      default: Math.floor(Math.random() * 3001) + 2000,
+    },
+    savingsBalance: {
+      type: Number,
+      default: Math.floor(Math.random() * 3001) + 2000,
+    },
+    creditBalance: {
+      type: Number,
+      default: Math.floor(Math.random() * 3001) + 2000,
+    }, // Ajoute un solde de départ aléatoire entre 2000 et 5000
   },
   {
     timestamps: true,

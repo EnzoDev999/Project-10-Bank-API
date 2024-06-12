@@ -46,15 +46,8 @@ const authSlice = createSlice({
   },
 });
 
-export const {
-  loginSuccess,
-  loginFail,
-  logout,
-  userLoaded,
-  userLoadFailed,
-  profileUpdateSuccess,
-  profileUpdateFailed,
-} = authSlice.actions;
+export const { loginSuccess, loginFail, logout, userLoaded, userLoadFailed } =
+  authSlice.actions;
 
 export const login = (username, password) => async (dispatch) => {
   try {
@@ -108,9 +101,9 @@ export const updateUserProfile =
           },
         }
       );
-      dispatch(profileUpdateSuccess(response.data.body));
+      dispatch(userLoaded(response.data.body));
     } catch (error) {
-      dispatch(profileUpdateFailed(error.response.data.message));
+      dispatch(userLoadFailed(error.response.data.message));
     }
   };
 

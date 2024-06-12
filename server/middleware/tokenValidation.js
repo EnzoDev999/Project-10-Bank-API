@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const { restart } = require("nodemon");
 
 module.exports.validateToken = (req, res, next) => {
   let response = {};
@@ -14,7 +13,7 @@ module.exports.validateToken = (req, res, next) => {
       userToken,
       process.env.SECRET_KEY || "default-secret-key"
     );
-    req.user = decodedToken; // Assurez-vous d'ajouter l'utilisateur décodé à la requête
+    req.user = decodedToken;
     return next();
   } catch (error) {
     console.error("Error in tokenValidation.js", error);

@@ -106,11 +106,14 @@ const User = () => {
         <section className="account">
           <div className="account-content-wrapper">
             <h3 className="account-title">Argent Bank Checking (x8349)</h3>
-            <p className="account-amount">${user.balance}</p>
+            <p className="account-amount">${user.checkingBalance}</p>
             <p className="account-amount-description">Available Balance</p>
           </div>
           <div className="account-content-wrapper cta">
-            <Link className="transaction-button" to="/transactions">
+            <Link
+              className="transaction-button"
+              to="/transactions?accountType=checking"
+            >
               View transactions
             </Link>
           </div>
@@ -118,11 +121,14 @@ const User = () => {
         <section className="account">
           <div className="account-content-wrapper">
             <h3 className="account-title">Argent Bank Savings (x6712)</h3>
-            <p className="account-amount">$10,928.42</p>
+            <p className="account-amount">${user.savingsBalance}</p>
             <p className="account-amount-description">Available Balance</p>
           </div>
           <div className="account-content-wrapper cta">
-            <Link className="transaction-button" to="/transactions">
+            <Link
+              className="transaction-button"
+              to="/transactions?accountType=savings"
+            >
               View transactions
             </Link>
           </div>
@@ -130,11 +136,14 @@ const User = () => {
         <section className="account">
           <div className="account-content-wrapper">
             <h3 className="account-title">Argent Bank Credit Card (x8349)</h3>
-            <p className="account-amount">$184.30</p>
+            <p className="account-amount">${user.creditBalance}</p>
             <p className="account-amount-description">Current Balance</p>
           </div>
           <div className="account-content-wrapper cta">
-            <Link className="transaction-button" to="/transactions">
+            <Link
+              className="transaction-button"
+              to="/transactions?accountType=credit"
+            >
               View transactions
             </Link>
           </div>

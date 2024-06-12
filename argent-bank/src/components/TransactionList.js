@@ -1,7 +1,11 @@
+// TransactionsList.js
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTransactionsForCurrentMonth } from "../slices/transactionSlice";
+import {
+  fetchTransactionsForCurrentMonth,
+  setAccountType,
+} from "../slices/transactionSlice";
 import { loadUser } from "../slices/authSlice";
 import AddTransaction from "./AddTransaction";
 import TransactionItem from "./TransactionItem";
@@ -12,7 +16,11 @@ const TransactionsList = () => {
   const transactions = useSelector((state) => state.transactions.transactions);
   const transactionStatus = useSelector((state) => state.transactions.status);
   const error = useSelector((state) => state.transactions.error);
+  const accountType = useSelector((state) => state.transactions.accountType);
+  const user = useSelector((state) => state.auth.user);
   const userStatus = useSelector((state) => state.auth.status);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userStatus === "idle") {
@@ -21,17 +29,47 @@ const TransactionsList = () => {
   }, [userStatus, dispatch]);
 
   useEffect(() => {
-    if (transactionStatus === "idle" && userStatus === "succeeded") {
-      dispatch(fetchTransactionsForCurrentMonth());
+    const params = new URLSearchParams(location.search);
+    const accountTypeParam = params.get("accountType");
+    if (accountTypeParam) {
+      dispatch(setAccountType(accountTypeParam));
     }
-  }, [transactionStatus, userStatus, dispatch]);
+  }, [location.search, dispatch]);
 
   useEffect(() => {
-    console.log("Transaction status:", transactionStatus);
-    console.log("User status:", userStatus);
-    console.log("Transactions:", transactions);
-    console.log("Error:", error);
-  }, [transactionStatus, userStatus, transactions, error]);
+    if (accountType && userStatus === "succeeded") {
+      dispatch(fetchTransactionsForCurrentMonth(accountType));
+      navigate({ search: `?accountType=${accountType}` }, { replace: true }); // Mettre à jour l'URL
+    }
+  }, [dispatch, accountType, userStatus, navigate]);
+
+  const handlePrevAccount = () => {
+    const types = ["checking", "savings", "credit"];
+    const currentIndex = types.indexOf(accountType);
+    const newIndex = (currentIndex - 1 + types.length) % types.length;
+    dispatch(setAccountType(types[newIndex]));
+  };
+
+  const handleNextAccount = () => {
+    const types = ["checking", "savings", "credit"];
+    const currentIndex = types.indexOf(accountType);
+    const newIndex = (currentIndex + 1) % types.length;
+    dispatch(setAccountType(types[newIndex]));
+  };
+
+  const getCurrentBalance = () => {
+    if (!user) return 0;
+    switch (accountType) {
+      case "checking":
+        return user.checkingBalance;
+      case "savings":
+        return user.savingsBalance;
+      case "credit":
+        return user.creditBalance;
+      default:
+        return 0;
+    }
+  };
 
   let content;
 
@@ -49,7 +87,7 @@ const TransactionsList = () => {
     } else {
       content = <div>No transactions found</div>;
     }
-  } else if (transactionStatus === "failed" || userStatus === "failed") {
+  } else if (transactionStatus === "failed") {
     content = <div>{error}</div>;
   }
 
@@ -62,7 +100,12 @@ const TransactionsList = () => {
           alt="Argent Bank Logo"
         />
       </Link>
-      <h2>Transactions</h2>
+      <h2>Transactions {accountType}</h2>
+      <div>
+        <button onClick={handlePrevAccount}>Previous</button>
+        <span>Balance: ${getCurrentBalance()}</span>
+        <button onClick={handleNextAccount}>Next</button>
+      </div>
       <AddTransaction />
       {content}
     </section>

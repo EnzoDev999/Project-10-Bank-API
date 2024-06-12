@@ -1,9 +1,81 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+export const fetchTransactions = createAsyncThunk(
+  "transactions/fetchTransactions",
+  async (_, { getState }) => {
+    const token = getState().auth.token;
+    const response = await axios.get(
+      "http://localhost:3001/api/v1/transactions",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.body;
+  }
+);
+
+export const addTransaction = createAsyncThunk(
+  "transactions/addTransaction",
+  async (transaction, { getState, dispatch }) => {
+    const token = getState().auth.token;
+    const accountType = getState().transactions.accountType; // Récupérer le type de compte actuel
+    const response = await axios.post(
+      "http://localhost:3001/api/v1/transactions",
+      { ...transaction, accountType }, // Ajouter le type de compte à la transaction
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    await dispatch(fetchTransactionsForCurrentMonth(accountType));
+    return response.data.data; // Utiliser data au lieu de body
+  }
+);
+
+export const updateTransaction = createAsyncThunk(
+  "transactions/updateTransaction",
+  async (transaction, { getState, dispatch }) => {
+    const token = getState().auth.token;
+    const accountType = getState().transactions.accountType; // Récupérer le type de compte actuel
+    const response = await axios.put(
+      `http://localhost:3001/api/v1/transactions/${transaction.id}`,
+      transaction,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    await dispatch(fetchTransactionsForCurrentMonth(accountType));
+    return response.data.data; // Utiliser data au lieu de body
+  }
+);
+
+export const deleteTransaction = createAsyncThunk(
+  "transactions/deleteTransaction",
+  async (transactionId, { getState, dispatch }) => {
+    const token = getState().auth.token;
+    const accountType = getState().transactions.accountType; // Récupérer le type de compte actuel
+    await axios.delete(
+      `http://localhost:3001/api/v1/transactions/${transactionId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    await dispatch(fetchTransactionsForCurrentMonth(accountType));
+    return transactionId;
+  }
+);
+
 export const fetchTransactionsForCurrentMonth = createAsyncThunk(
   "transactions/fetchTransactionsForCurrentMonth",
-  async (_, { getState, rejectWithValue }) => {
+  async (accountType, { getState, rejectWithValue }) => {
     const token = getState().auth.token;
     const user = getState().auth.user;
 
@@ -14,7 +86,7 @@ export const fetchTransactionsForCurrentMonth = createAsyncThunk(
 
     try {
       const response = await axios.get(
-        "http://localhost:3001/api/v1/transactions/current-month",
+        `http://localhost:3001/api/v1/transactions/current-month?accountType=${accountType}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -23,11 +95,25 @@ export const fetchTransactionsForCurrentMonth = createAsyncThunk(
       );
       const transactions = response.data.data;
 
-      let currentBalance = user.balance;
-      const transactionsWithBalance = transactions.map((transaction, index) => {
+      let currentBalance;
+      switch (accountType) {
+        case "checking":
+          currentBalance = user.checkingBalance;
+          break;
+        case "savings":
+          currentBalance = user.savingsBalance;
+          break;
+        case "credit":
+          currentBalance = user.creditBalance;
+          break;
+        default:
+          currentBalance = 0;
+      }
+
+      const transactionsWithBalance = transactions.map((transaction) => {
         const transactionWithBalance = {
           ...transaction,
-          balance: currentBalance,
+          balanceAfterTransaction: currentBalance - transaction.amount,
         };
         currentBalance -= transaction.amount;
         return transactionWithBalance;
@@ -42,68 +128,49 @@ export const fetchTransactionsForCurrentMonth = createAsyncThunk(
   }
 );
 
-export const addTransaction = createAsyncThunk(
-  "transactions/addTransaction",
-  async (transaction, { getState, dispatch }) => {
-    const token = getState().auth.token;
-    const response = await axios.post(
-      "http://localhost:3001/api/v1/transactions",
-      transaction,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    await dispatch(fetchTransactionsForCurrentMonth());
-    return response.data.body;
-  }
-);
-
-export const updateTransaction = createAsyncThunk(
-  "transactions/updateTransaction",
-  async (transaction, { getState, dispatch }) => {
-    const token = getState().auth.token;
-    const response = await axios.put(
-      `http://localhost:3001/api/v1/transactions/${transaction.id}`,
-      transaction,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    await dispatch(fetchTransactionsForCurrentMonth());
-    return response.data.body;
-  }
-);
-
-export const deleteTransaction = createAsyncThunk(
-  "transactions/deleteTransaction",
-  async (transactionId, { getState }) => {
-    const token = getState().auth.token;
-    await axios.delete(
-      `http://localhost:3001/api/v1/transactions/${transactionId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return transactionId;
-  }
-);
-
 const transactionSlice = createSlice({
   name: "transactions",
   initialState: {
     transactions: [],
     status: "idle",
     error: null,
+    accountType: "checking", // Ajouter le type de compte dans le state
   },
-  reducers: {},
+  reducers: {
+    setAccountType: (state, action) => {
+      state.accountType = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchTransactions.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchTransactions.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.transactions = action.payload;
+      })
+      .addCase(fetchTransactions.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(addTransaction.fulfilled, (state, action) => {
+        state.transactions.unshift(action.payload);
+        state.status = "idle"; // Recharger la liste des transactions
+      })
+      .addCase(updateTransaction.fulfilled, (state, action) => {
+        const index = state.transactions.findIndex(
+          (transaction) => transaction._id === action.payload._id
+        );
+        state.transactions[index] = action.payload;
+        state.status = "idle"; // Recharger la liste des transactions
+      })
+      .addCase(deleteTransaction.fulfilled, (state, action) => {
+        state.transactions = state.transactions.filter(
+          (transaction) => transaction._id !== action.payload
+        );
+        state.status = "idle"; // Recharger la liste des transactions
+      })
       .addCase(fetchTransactionsForCurrentMonth.pending, (state) => {
         state.status = "loading";
       })
@@ -114,17 +181,10 @@ const transactionSlice = createSlice({
       .addCase(fetchTransactionsForCurrentMonth.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
-      })
-      .addCase(addTransaction.fulfilled, (state, action) => {
-        state.status = "idle"; // Recharger la liste des transactions
-      })
-      .addCase(updateTransaction.fulfilled, (state, action) => {
-        state.status = "idle"; // Recharger la liste des transactions
-      })
-      .addCase(deleteTransaction.fulfilled, (state, action) => {
-        state.status = "idle"; // Recharger la liste des transactions
       });
   },
 });
+
+export const { setAccountType } = transactionSlice.actions;
 
 export default transactionSlice.reducer;

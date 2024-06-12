@@ -1,32 +1,35 @@
 const express = require("express");
-const router = express.Router();
-const transactionController = require("../controllers/transactionController.js");
+const transactionController = require("../controllers/transactionController");
 const { validateToken } = require("../middleware/tokenValidation");
 
+const router = express.Router();
+
 router.get(
-  "/current-month",
+  "/transactions",
+  validateToken,
+  transactionController.getAllTransactions
+);
+
+router.get(
+  "/transactions/current-month",
   validateToken,
   transactionController.getTransactionsForCurrentMonth
 );
 
-router.get("/", validateToken, transactionController.getAllTransactions);
-
-router.get(
-  "/:transactionId",
+router.post(
+  "/transactions",
   validateToken,
-  transactionController.getTransactionById
+  transactionController.createTransaction
 );
 
-router.post("/", validateToken, transactionController.createTransaction);
-
 router.put(
-  "/:transactionId",
+  "/transactions/:transactionId",
   validateToken,
   transactionController.updateTransaction
 );
 
 router.delete(
-  "/:transactionId",
+  "/transactions/:transactionId",
   validateToken,
   transactionController.deleteTransaction
 );

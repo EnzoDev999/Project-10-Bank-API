@@ -5,6 +5,7 @@ const swaggerUi = require("swagger-ui-express");
 const yaml = require("yamljs");
 const swaggerDocs = yaml.load("./swagger.yaml");
 const dbConnection = require("./database/connection");
+const transactionRoutes = require("./routes/transactionRoutes.js");
 
 dotEnv.config();
 
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Handle custom routes
+app.use("/api/v1", transactionRoutes);
 app.use("/api/v1/user", require("./routes/userRoutes"));
 app.use("/api/v1/transactions", require("./routes/transactionRoutes.js"));
 

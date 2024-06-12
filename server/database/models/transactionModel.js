@@ -6,7 +6,8 @@ const transactionSchema = new mongoose.Schema({
   type: { type: String, required: true },
   description: { type: String },
   date: { type: Date, default: Date.now },
-  balanceAfterTransaction: { type: Number, required: true }, // Ajout du champ balance
+  accountType: { type: String, required: true },
+  balanceAfterTransaction: { type: Number, required: true },
 });
 
 module.exports = mongoose.model("Transaction", transactionSchema);

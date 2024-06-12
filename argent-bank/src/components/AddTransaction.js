@@ -1,39 +1,49 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addTransaction } from "../slices/transactionSlice";
 
 const AddTransaction = () => {
   const [amount, setAmount] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState("expense"); // Définir un type par défaut
   const [description, setDescription] = useState("");
   const dispatch = useDispatch();
+  const accountType = useSelector((state) => state.transactions.accountType);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    await dispatch(addTransaction({ amount, type, description }));
-    // Rafraîchir la page après l'ajout d'une transaction
-    window.location.reload();
+    const newTransaction = {
+      amount: parseFloat(amount),
+      type,
+      description,
+      accountType,
+    };
+    dispatch(addTransaction(newTransaction));
+    setAmount("");
+    setType("expense"); // Réinitialiser au type par défaut
+    setDescription("");
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <input
         type="number"
+        placeholder="Amount"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
-        placeholder="Amount"
+        required
       />
       <input
         type="text"
+        placeholder="Type"
         value={type}
         onChange={(e) => setType(e.target.value)}
-        placeholder="Type"
+        required
       />
       <input
         type="text"
+        placeholder="Description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        placeholder="Description"
       />
       <button type="submit">Add Transaction</button>
     </form>
