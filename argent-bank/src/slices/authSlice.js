@@ -13,10 +13,11 @@ const authSlice = createSlice({
   },
   reducers: {
     loginSuccess: (state, action) => {
-      state.token = action.payload;
+      state.token = action.payload.token;
       state.isAuthenticated = true;
       state.loading = false;
-      localStorage.setItem("token", action.payload);
+      localStorage.setItem("token", action.payload.token);
+      localStorage.setItem("tokenExpiration", action.payload.expiration);
     },
     loginFail: (state, action) => {
       state.token = null;
@@ -31,6 +32,7 @@ const authSlice = createSlice({
       state.error = null;
       state.user = null;
       localStorage.removeItem("token");
+      localStorage.removeItem("tokenExpiration");
     },
     userLoaded: (state, action) => {
       state.user = action.payload;
@@ -49,6 +51,16 @@ const authSlice = createSlice({
 export const { loginSuccess, loginFail, logout, userLoaded, userLoadFailed } =
   authSlice.actions;
 
+const isTokenExpired = () => {
+  const expiration = localStorage.getItem("tokenExpiration");
+  if (!expiration) {
+    return true;
+  }
+  const expirationDate = new Date(expiration);
+  const currentDate = new Date();
+  return currentDate >= expirationDate;
+};
+
 export const login = (username, password) => async (dispatch) => {
   try {
     const response = await axios.post(
@@ -58,13 +70,18 @@ export const login = (username, password) => async (dispatch) => {
         password: password,
       }
     );
-    dispatch(loginSuccess(response.data.body.token));
+    dispatch(loginSuccess(response.data.body));
   } catch (error) {
     dispatch(loginFail(error.response.data.message));
   }
 };
 
 export const loadUser = () => async (dispatch, getState) => {
+  if (isTokenExpired()) {
+    dispatch(logout());
+    return;
+  }
+
   try {
     const token = getState().auth.token;
     if (!token) {
@@ -87,6 +104,11 @@ export const loadUser = () => async (dispatch, getState) => {
 
 export const updateUserProfile =
   (firstName, lastName) => async (dispatch, getState) => {
+    if (isTokenExpired()) {
+      dispatch(logout());
+      return;
+    }
+
     try {
       const token = getState().auth.token;
       const response = await axios.put(

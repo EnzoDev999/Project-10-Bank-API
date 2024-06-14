@@ -1,21 +1,16 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { loadUser } from "./slices/authSlice";
 import Home from "./components/Home";
 import SignIn from "./components/SignIn";
 import User from "./components/User";
 import TransactionsList from "./components/TransactionList";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   useEffect(() => {
     if (token) {
@@ -24,23 +19,22 @@ const App = () => {
   }, [token, dispatch]);
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/sign-in" element={<SignIn />} />
-        <Route
-          path="/user"
-          element={isAuthenticated ? <User /> : <Navigate to="/sign-in" />}
-        />
-        <Route
-          path="/transactions"
-          element={
-            isAuthenticated ? <TransactionsList /> : <Navigate to="/sign-in" />
-          }
-        />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/sign-in" element={<SignIn />} />
+      <Route path="/user" element={<ProtectedRoute element={User} />} />
+      <Route
+        path="/transactions"
+        element={<ProtectedRoute element={TransactionsList} />}
+      />
+    </Routes>
   );
 };
 
-export default App;
+const AppWithRouter = () => (
+  <Router>
+    <App />
+  </Router>
+);
+
+export default AppWithRouter;
