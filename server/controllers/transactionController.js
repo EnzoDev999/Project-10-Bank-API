@@ -135,6 +135,7 @@ module.exports.deleteTransaction = async (req, res) => {
     // Récupérer toutes les transactions après celle qui a été supprimée
     const subsequentTransactions = await Transaction.find({
       userId,
+      accountType: transactionToDelete.accountType,
       date: { $gt: transactionToDelete.date },
     }).sort("date");
 

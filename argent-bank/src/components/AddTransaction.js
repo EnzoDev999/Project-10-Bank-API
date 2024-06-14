@@ -21,6 +21,7 @@ const AddTransaction = () => {
     setAmount("");
     setType("expense"); // Réinitialiser au type par défaut
     setDescription("");
+    window.location.reload();
   };
 
   return (

@@ -66,7 +66,7 @@ module.exports.loginUser = async (serviceData) => {
       { expiresIn: "5h" }
     );
 
-    const expiration = new Date(Date.now() + 18000000).toISOString(); // 1 mn d'expiration
+    const expiration = new Date(Date.now() + 18000000).toISOString(); // 5h d'expiration
 
     return { token, expiration };
   } catch (error) {

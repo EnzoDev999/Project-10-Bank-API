@@ -20,11 +20,13 @@ const TransactionItem = ({ transaction }) => {
     );
     await dispatch(fetchTransactionsForCurrentMonth(transaction.accountType)); // Recharger les transactions après la mise à jour
     setIsEditing(false);
+    window.location.reload();
   };
 
   const handleDelete = async () => {
     await dispatch(deleteTransaction(transaction._id));
     await dispatch(fetchTransactionsForCurrentMonth(transaction.accountType)); // Recharger les transactions après la suppression
+    window.location.reload();
   };
 
   return (

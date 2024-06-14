@@ -31,6 +31,7 @@ export const addTransaction = createAsyncThunk(
         },
       }
     );
+    console.log("Transaction ajoutée :", response.data.data); // Log de la nouvelle transaction
     await dispatch(fetchTransactionsForCurrentMonth(accountType));
     return response.data.data; // Utiliser data au lieu de body
   }
@@ -110,12 +111,12 @@ export const fetchTransactionsForCurrentMonth = createAsyncThunk(
           currentBalance = 0;
       }
 
-      const transactionsWithBalance = transactions.map((transaction) => {
+      const transactionsWithBalance = transactions.map((transaction, index) => {
         const transactionWithBalance = {
           ...transaction,
-          balanceAfterTransaction: currentBalance - transaction.amount,
+          balance: currentBalance, // modification ici
         };
-        currentBalance -= transaction.amount;
+        currentBalance -= transaction.amount; // La balance est soustraite ici une seule fois
         return transactionWithBalance;
       });
 
