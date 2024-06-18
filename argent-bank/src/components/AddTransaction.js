@@ -1,11 +1,12 @@
+// AddTransaction.js
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addTransaction } from "../slices/transactionSlice";
 
 const AddTransaction = () => {
   const [amount, setAmount] = useState("");
-  const [type, setType] = useState("expense"); // Définir un type par défaut
-  const [description, setDescription] = useState("");
+  const [type, setType] = useState("");
+  const [category, setCategory] = useState("");
   const dispatch = useDispatch();
   const accountType = useSelector((state) => state.transactions.accountType);
 
@@ -13,15 +14,14 @@ const AddTransaction = () => {
     e.preventDefault();
     const newTransaction = {
       amount: parseFloat(amount),
-      type,
-      description,
+      type, // Assure-toi que ce champ est bien inclus
+      category,
       accountType,
     };
     dispatch(addTransaction(newTransaction));
     setAmount("");
-    setType("expense"); // Réinitialiser au type par défaut
-    setDescription("");
-    window.location.reload();
+    setType("");
+    setCategory("");
   };
 
   return (
@@ -42,9 +42,9 @@ const AddTransaction = () => {
       />
       <input
         type="text"
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        placeholder="Category"
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
       />
       <button type="submit">Add Transaction</button>
     </form>

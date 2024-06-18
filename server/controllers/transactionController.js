@@ -53,7 +53,7 @@ module.exports.createTransaction = async (req, res) => {
     const decodedToken = jwt.decode(token);
     const userId = decodedToken.id;
 
-    const { amount, type, description, date, accountType } = req.body;
+    const { amount, type, category, date, accountType } = req.body;
 
     // Find the user's current balance for the given account type
     const user = await User.findById(userId);
@@ -78,7 +78,7 @@ module.exports.createTransaction = async (req, res) => {
       userId,
       amount,
       type,
-      description,
+      category,
       date,
       balanceAfterTransaction: newBalance,
       accountType,
@@ -109,8 +109,13 @@ module.exports.createTransaction = async (req, res) => {
 
 module.exports.updateTransaction = async (req, res) => {
   try {
-    const transaction = await transactionService.updateTransaction(req);
-    res.status(200).json({ body: transaction });
+    const { category, notes } = req.body;
+    const transaction = await Transaction.findByIdAndUpdate(
+      req.params.transactionId,
+      { category, notes },
+      { new: true }
+    );
+    res.status(200).json({ data: transaction });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
