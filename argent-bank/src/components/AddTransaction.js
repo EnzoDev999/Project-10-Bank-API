@@ -19,6 +19,7 @@ const AddTransaction = () => {
       accountType,
     };
     dispatch(addTransaction(newTransaction));
+    window.location.reload();
     setAmount("");
     setType("");
     setCategory("");

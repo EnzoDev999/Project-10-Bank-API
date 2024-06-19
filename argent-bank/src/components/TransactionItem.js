@@ -29,6 +29,7 @@ const TransactionItem = ({ transaction }) => {
   const handleDelete = async () => {
     await dispatch(deleteTransaction(transaction._id));
     await dispatch(fetchTransactionsForCurrentMonth(transaction.accountType)); // Recharger les transactions après la suppression
+    window.location.reload();
   };
 
   const handleCancelEdit = () => {
