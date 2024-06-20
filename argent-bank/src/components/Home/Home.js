@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import argentBankLogo from "../assets/img/argentBankLogo.png";
-import chatIcon from "../assets/img/icon-chat.png";
-import moneyIcon from "../assets/img/icon-money.png";
-import securityIcon from "../assets/img/icon-security.png";
-import "../main.css";
+import argentBankLogo from "../../assets/img/argentBankLogo.png";
+import chatIcon from "../../assets/img/icon-chat.png";
+import moneyIcon from "../../assets/img/icon-money.png";
+import securityIcon from "../../assets/img/icon-security.png";
+import "./Home.css";
 
 const Home = () => {
   return (

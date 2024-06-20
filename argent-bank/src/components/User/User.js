@@ -1,9 +1,11 @@
-// User.js
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadUser, updateUserProfile, logout } from "../slices/authSlice";
+import { loadUser, updateUserProfile, logout } from "../../slices/authSlice";
 import { useNavigate, Link } from "react-router-dom";
-import argentBankLogo from "../assets/img/argentBankLogo.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserCircle, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import "./User.css";
+import argentBankLogo from "../../assets/img/argentBankLogo.png";
 
 const User = () => {
   const dispatch = useDispatch();
@@ -35,6 +37,12 @@ const User = () => {
     setEditMode(false);
   };
 
+  const handleCancelEdit = () => {
+    setFirstName(user.firstName);
+    setLastName(user.lastName);
+    setEditMode(false);
+  };
+
   const handleLogout = () => {
     dispatch(logout());
   };
@@ -54,18 +62,18 @@ const User = () => {
           />
           <h1 className="sr-only">Argent Bank</h1>
         </a>
-        <div>
-          <a className="main-nav-item" href="/sign-in">
-            <i className="fa fa-user-circle"></i>
+        <div className="main-nav-items-container">
+          <a className="main-nav-item" href="/user">
+            <FontAwesomeIcon icon={faUserCircle} />
             {user.firstName} {user.lastName}
           </a>
           <a className="main-nav-item" href="/" onClick={handleLogout}>
-            <i className="fa fa-sign-out"></i>
+            <FontAwesomeIcon icon={faSignOutAlt} />
             Sign Out
           </a>
         </div>
       </nav>
-      <main className="main bg-dark">
+      <main className="main">
         <div className="header">
           <h1>
             Welcome back
@@ -80,26 +88,29 @@ const User = () => {
           </button>
         </div>
         {editMode && (
-          <form onSubmit={handleUpdateProfile}>
-            <div>
-              <label htmlFor="firstName">First Name</label>
-              <input
-                type="text"
-                id="firstName"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="lastName">Last Name</label>
-              <input
-                type="text"
-                id="lastName"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
+          <form className="edit-form" onSubmit={handleUpdateProfile}>
+            <div className="edit-form-inputs">
+              <div>
+                <input
+                  type="text"
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
             </div>
             <button type="submit">Save</button>
+            <button type="button" onClick={handleCancelEdit}>
+              Cancel
+            </button>
           </form>
         )}
         <h2 className="sr-only">Accounts</h2>
