@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadUser, updateUserProfile, logout } from "../../slices/authSlice";
+import { loadUser, updateUserProfile } from "../../slices/authSlice";
 import { useNavigate, Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import Header from "../Header/Header";
 import "./User.css";
-import argentBankLogo from "../../assets/img/argentBankLogo.png";
 
 const User = () => {
   const dispatch = useDispatch();
@@ -37,42 +35,13 @@ const User = () => {
     setEditMode(false);
   };
 
-  const handleCancelEdit = () => {
-    setFirstName(user.firstName);
-    setLastName(user.lastName);
-    setEditMode(false);
-  };
-
-  const handleLogout = () => {
-    dispatch(logout());
-  };
-
   if (!user) {
     return <div>Loading...</div>;
   }
 
   return (
     <div>
-      <nav className="main-nav">
-        <a className="main-nav-logo" href="/">
-          <img
-            className="main-nav-logo-image"
-            src={argentBankLogo}
-            alt="Argent Bank Logo"
-          />
-          <h1 className="sr-only">Argent Bank</h1>
-        </a>
-        <div className="main-nav-items-container">
-          <a className="main-nav-item" href="/user">
-            <FontAwesomeIcon icon={faUserCircle} />
-            {user.firstName} {user.lastName}
-          </a>
-          <a className="main-nav-item" href="/" onClick={handleLogout}>
-            <FontAwesomeIcon icon={faSignOutAlt} />
-            Sign Out
-          </a>
-        </div>
-      </nav>
+      <Header />
       <main className="main">
         <div className="header">
           <h1>
@@ -108,7 +77,7 @@ const User = () => {
               </div>
             </div>
             <button type="submit">Save</button>
-            <button type="button" onClick={handleCancelEdit}>
+            <button type="button" onClick={() => setEditMode(false)}>
               Cancel
             </button>
           </form>
