@@ -9,6 +9,7 @@ import { loadUser } from "../slices/authSlice";
 import AddTransaction from "./AddTransaction";
 import TransactionItem from "./TransactionItem";
 import Header from "./Header/Header";
+import "./Transactions.css";
 
 const TransactionsList = () => {
   const dispatch = useDispatch();
@@ -73,11 +74,11 @@ const TransactionsList = () => {
   let content;
 
   if (transactionStatus === "loading" || userStatus === "loading") {
-    content = <div>Loading...</div>;
+    content = <div className="loading-spinner"></div>;
   } else if (transactionStatus === "succeeded") {
     if (transactions.length > 0) {
       content = (
-        <ul>
+        <ul className="transaction-list">
           {transactions.map((transaction) => (
             <TransactionItem key={transaction._id} transaction={transaction} />
           ))}
@@ -95,7 +96,7 @@ const TransactionsList = () => {
       <Header />
       <section className="transactions">
         <h2>Transactions {accountType}</h2>
-        <div>
+        <div className="account-navigation">
           <button onClick={handlePrevAccount}>Previous</button>
           <span>Balance: ${getCurrentBalance()}</span>
           <button onClick={handleNextAccount}>Next</button>

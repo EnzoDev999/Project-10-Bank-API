@@ -5,6 +5,8 @@ import {
   deleteTransaction,
   fetchTransactionsForCurrentMonth,
 } from "../slices/transactionSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import "./Transactions.css";
 
 const TransactionItem = ({ transaction }) => {
@@ -51,14 +53,26 @@ const TransactionItem = ({ transaction }) => {
 
   return (
     <li>
-      <div onClick={() => setIsExpanded(!isExpanded)}>
-        <span>{transaction.date}</span>
-        <span>{transaction.category}</span>
-        <span>${transaction.amount}</span>
-        <span>Balance: ${transaction.balanceAfterTransaction}</span>
+      <div
+        className="transaction-summary"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="icon">
+          <FontAwesomeIcon icon={isExpanded ? faChevronUp : faChevronDown} />
+        </div>
+        <span>
+          {new Date(transaction.date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </span>
+        <span>{transaction.description}</span>
+        <span>${transaction.amount.toFixed(2)}</span>
+        <span>${transaction.balanceAfterTransaction.toFixed(2)}</span>
       </div>
       {isExpanded && (
-        <div className="transaction-details">
+        <div className="transaction-details active">
           <div>
             <strong>Transaction Type:</strong> {transaction.type}
           </div>

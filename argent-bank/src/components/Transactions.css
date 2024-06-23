@@ -1,5 +1,19 @@
+.transactions-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f3f3f3;
+  border-bottom: 1px solid #ccc;
+  font-weight: bold;
+}
+
+.transactions-header div {
+  flex: 1;
+  text-align: center;
+}
+
 .transactions {
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ddd;
@@ -119,4 +133,41 @@
 
 button {
   margin-left: 10px;
+}
+
+.transactions-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f3f3f3;
+  border-bottom: 1px solid #ccc;
+  font-weight: bold;
+}
+
+.transactions-header div {
+  flex: 1;
+  text-align: center;
+}
+
+
+
+/* LOADING SPIN */
+
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #22a6b3;
+  animation: spin 1s ease infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

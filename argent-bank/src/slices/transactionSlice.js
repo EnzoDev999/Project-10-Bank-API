@@ -120,6 +120,9 @@ export const fetchTransactionsForCurrentMonth = createAsyncThunk(
         return transactionWithBalance;
       });
 
+      // Ajout un délai artificiel ici
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
       console.log("Transactions with balance:", transactionsWithBalance);
       return transactionsWithBalance;
     } catch (error) {
