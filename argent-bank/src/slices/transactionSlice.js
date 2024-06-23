@@ -22,6 +22,7 @@ export const addTransaction = createAsyncThunk(
   async (transaction, { getState, dispatch }) => {
     const token = getState().auth.token;
     const accountType = getState().transactions.accountType; // Récupérer le type de compte actuel
+    console.log("Transaction à envoyer :", transaction);
     const response = await axios.post(
       "http://localhost:3001/api/v1/transactions",
       { ...transaction, accountType }, // Ajouter le type de compte à la transaction
@@ -32,6 +33,10 @@ export const addTransaction = createAsyncThunk(
       }
     );
     console.log("Transaction ajoutée :", response.data.data); // Log de la nouvelle transaction
+    console.log(
+      "Description de la transaction ajoutée :",
+      response.data.data.description
+    ); // Log de la description ajoutée
     await dispatch(fetchTransactionsForCurrentMonth(accountType));
     return response.data.data; // Utiliser data au lieu de body
   }

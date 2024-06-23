@@ -16,7 +16,12 @@ module.exports.createTransaction = async (serviceData) => {
 
     let result = await transaction.save();
 
-    if (!result.amount || !result.type || !result.category || !result.balance) {
+    if (
+      !result.amount ||
+      !result.type ||
+      !result.description ||
+      !result.balance
+    ) {
       console.error("Transaction created with missing fields:", result);
       throw new Error("Transaction created with missing fields");
     }

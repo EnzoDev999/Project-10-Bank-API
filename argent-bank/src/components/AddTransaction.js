@@ -1,4 +1,3 @@
-// AddTransaction.js
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addTransaction } from "../slices/transactionSlice";
@@ -6,7 +5,7 @@ import { addTransaction } from "../slices/transactionSlice";
 const AddTransaction = () => {
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("");
-  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
   const dispatch = useDispatch();
   const accountType = useSelector((state) => state.transactions.accountType);
 
@@ -15,14 +14,14 @@ const AddTransaction = () => {
     const newTransaction = {
       amount: parseFloat(amount),
       type,
-      category,
+      description,
       accountType,
     };
     dispatch(addTransaction(newTransaction));
     window.location.reload();
     setAmount("");
     setType("");
-    setCategory("");
+    setDescription("");
   };
 
   return (
@@ -43,9 +42,10 @@ const AddTransaction = () => {
       />
       <input
         type="text"
-        placeholder="Category"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
+        placeholder="Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        required
       />
       <button type="submit">Add Transaction</button>
     </form>

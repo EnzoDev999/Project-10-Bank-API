@@ -36,6 +36,7 @@ app.get("/", (req, res, next) => {
   res.send("Hello from my Express server v2!");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
+// Change this line to listen on all network interfaces
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server listening on http://0.0.0.0:${PORT}`);
 });

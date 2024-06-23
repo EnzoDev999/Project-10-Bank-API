@@ -53,7 +53,7 @@ module.exports.createTransaction = async (req, res) => {
     const decodedToken = jwt.decode(token);
     const userId = decodedToken.id;
 
-    const { amount, type, category, date, accountType } = req.body;
+    const { amount, type, description, date, accountType } = req.body;
 
     // Find the user's current balance for the given account type
     const user = await User.findById(userId);
@@ -78,7 +78,7 @@ module.exports.createTransaction = async (req, res) => {
       userId,
       amount,
       type,
-      category,
+      description,
       date,
       balanceAfterTransaction: newBalance,
       accountType,
