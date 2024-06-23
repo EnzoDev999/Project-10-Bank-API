@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchTransactionsForCurrentMonth,
@@ -8,7 +8,7 @@ import {
 import { loadUser } from "../slices/authSlice";
 import AddTransaction from "./AddTransaction";
 import TransactionItem from "./TransactionItem";
-import argentBankLogo from "../assets/img/argentBankLogo.png";
+import Header from "./Header/Header";
 
 const TransactionsList = () => {
   const dispatch = useDispatch();
@@ -91,23 +91,19 @@ const TransactionsList = () => {
   }
 
   return (
-    <section className="transactions">
-      <Link className="main-nav-logo" to="/user">
-        <img
-          className="main-nav-logo-image"
-          src={argentBankLogo}
-          alt="Argent Bank Logo"
-        />
-      </Link>
-      <h2>Transactions {accountType}</h2>
-      <div>
-        <button onClick={handlePrevAccount}>Previous</button>
-        <span>Balance: ${getCurrentBalance()}</span>
-        <button onClick={handleNextAccount}>Next</button>
-      </div>
-      <AddTransaction />
-      {content}
-    </section>
+    <div>
+      <Header />
+      <section className="transactions">
+        <h2>Transactions {accountType}</h2>
+        <div>
+          <button onClick={handlePrevAccount}>Previous</button>
+          <span>Balance: ${getCurrentBalance()}</span>
+          <button onClick={handleNextAccount}>Next</button>
+        </div>
+        <AddTransaction />
+        {content}
+      </section>
+    </div>
   );
 };
 

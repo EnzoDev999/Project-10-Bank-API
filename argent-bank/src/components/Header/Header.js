@@ -25,14 +25,23 @@ const Header = () => {
         <h1 className="sr-only">Argent Bank</h1>
       </a>
       <div className="main-nav-items-container">
-        <a className="main-nav-item" href="/user">
-          <FontAwesomeIcon icon={faUserCircle} />
-          {user.firstName} {user.lastName}
-        </a>
-        <a className="main-nav-item" href="/" onClick={handleLogout}>
-          <FontAwesomeIcon icon={faSignOutAlt} />
-          Sign Out
-        </a>
+        {user ? (
+          <>
+            <a className="main-nav-item" href="/user">
+              <FontAwesomeIcon icon={faUserCircle} />
+              {user.firstName} {user.lastName}
+            </a>
+            <a className="main-nav-item" href="/" onClick={handleLogout}>
+              <FontAwesomeIcon icon={faSignOutAlt} />
+              Sign Out
+            </a>
+          </>
+        ) : (
+          <a className="main-nav-item" href="/sign-in">
+            <FontAwesomeIcon icon={faUserCircle} />
+            Sign In
+          </a>
+        )}
       </div>
     </nav>
   );

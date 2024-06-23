@@ -14,7 +14,7 @@ const AddTransaction = () => {
     e.preventDefault();
     const newTransaction = {
       amount: parseFloat(amount),
-      type, // Assure-toi que ce champ est bien inclus
+      type,
       category,
       accountType,
     };

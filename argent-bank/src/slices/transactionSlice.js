@@ -135,7 +135,7 @@ const transactionSlice = createSlice({
     transactions: [],
     status: "idle",
     error: null,
-    accountType: "checking", // Ajouter le type de compte dans le state
+    accountType: "",
   },
   reducers: {
     setAccountType: (state, action) => {
