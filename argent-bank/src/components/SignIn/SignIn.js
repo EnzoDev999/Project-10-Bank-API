@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../slices/authSlice";
 import { useNavigate } from "react-router-dom";
-import argentBankLogo from "../../assets/img/argentBankLogo.png";
 import "./SignIn.css";
 
 const SignIn = () => {
@@ -26,22 +25,6 @@ const SignIn = () => {
 
   return (
     <div>
-      <nav className="main-nav">
-        <a className="main-nav-logo" href="/">
-          <img
-            className="main-nav-logo-image"
-            src={argentBankLogo}
-            alt="Argent Bank Logo"
-          />
-          <h1 className="sr-only">Argent Bank</h1>
-        </a>
-        <div>
-          <a className="main-nav-item" href="./sign-in">
-            <i className="fa fa-user-circle"></i>
-            Sign In
-          </a>
-        </div>
-      </nav>
       <main className="main bg-dark">
         <section className="sign-in-content">
           <i className="fa fa-user-circle sign-in-icon"></i>
@@ -67,16 +50,13 @@ const SignIn = () => {
                 required
               />
             </div>
-            <button classNameName="sign-in-button" type="submit">
+            <button className="sign-in-button" type="submit">
               Sign In
             </button>
-            {authError && <p classNameName="error">{authError}</p>}
+            {authError && <p className="error">{authError}</p>}
           </form>
         </section>
       </main>
-      <footer className="footer">
-        <p className="footer-text">Copyright 2020 Argent Bank</p>
-      </footer>
     </div>
   );
 };

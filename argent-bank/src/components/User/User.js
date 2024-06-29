@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUser, updateUserProfile } from "../../slices/authSlice";
 import { useNavigate, Link } from "react-router-dom";
-import Header from "../Header/Header";
 import "./User.css";
 
 const formatAmount = (amount) => {
@@ -48,7 +47,6 @@ const User = () => {
 
   return (
     <div>
-      <Header />
       <main className="main">
         <div className="header">
           <h1>
@@ -142,9 +140,6 @@ const User = () => {
           </div>
         </section>
       </main>
-      <footer className="footer">
-        <p className="footer-text">Copyright 2020 Argent Bank</p>
-      </footer>
     </div>
   );
 };

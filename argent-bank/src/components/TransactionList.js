@@ -7,7 +7,6 @@ import {
 } from "../slices/transactionSlice";
 import { loadUser } from "../slices/authSlice";
 import TransactionItem from "./TransactionItem";
-import Header from "./Header/Header";
 import {
   faChevronLeft,
   faChevronRight,
@@ -106,7 +105,6 @@ const TransactionsList = () => {
 
   return (
     <div>
-      <Header />
       <div className="account-informations">
         <h2>Argent Bank {accountType}</h2>
         <div className="account-navigation">

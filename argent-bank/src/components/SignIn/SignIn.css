@@ -1,3 +1,18 @@
+.sign-in-content {
+  box-sizing: border-box;
+  background-color: white;
+  width: 300px;
+  margin: 0 auto;
+  margin-top: 3rem;
+  padding: 2rem;
+}
+
+@media (max-width: 320px) {
+  .sign-in-content{
+    width: 250px;
+  }
+}
+
 .sign-in-button {
     display: block;
     width: 100%;
@@ -8,15 +23,6 @@
     border-color: #00bc77;
     background-color: #00bc77;
     color: #fff;
-  }
-  
-  .sign-in-content {
-    box-sizing: border-box;
-    background-color: white;
-    width: 300px;
-    margin: 0 auto;
-    margin-top: 3rem;
-    padding: 2rem;
   }
   
   .sign-in-icon {
@@ -37,16 +43,4 @@
   .input-wrapper input {
     padding: 5px;
     font-size: 1.2rem;
-  }
-  
-  .footer {
-    display: flex;
-    justify-content: center;
-    border-top: 2px solid #ccc;
-    padding: 2rem 0 1.5rem;
-  }
-  
-  .footer-text {
-    margin: 0;
-    padding: 0;
   }

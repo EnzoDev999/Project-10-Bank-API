@@ -7,6 +7,7 @@ import SignIn from "./components/SignIn/SignIn";
 import User from "./components/User/User";
 import TransactionsList from "./components/TransactionList";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -20,13 +21,15 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/sign-in" element={<SignIn />} />
-      <Route path="/user" element={<ProtectedRoute element={User} />} />
-      <Route
-        path="/transactions"
-        element={<ProtectedRoute element={TransactionsList} />}
-      />
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/user" element={<ProtectedRoute element={User} />} />
+        <Route
+          path="/transactions"
+          element={<ProtectedRoute element={TransactionsList} />}
+        />
+      </Route>
     </Routes>
   );
 };

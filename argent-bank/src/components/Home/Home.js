@@ -1,6 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import argentBankLogo from "../../assets/img/argentBankLogo.png";
 import chatIcon from "../../assets/img/icon-chat.png";
 import moneyIcon from "../../assets/img/icon-money.png";
 import securityIcon from "../../assets/img/icon-security.png";
@@ -9,22 +7,6 @@ import "./Home.css";
 const Home = () => {
   return (
     <div>
-      <nav className="main-nav">
-        <Link className="main-nav-logo" to="/user">
-          <img
-            className="main-nav-logo-image"
-            src={argentBankLogo}
-            alt="Argent Bank Logo"
-          />
-          <h1 className="sr-only">Argent Bank</h1>
-        </Link>
-        <div>
-          <Link className="main-nav-item" to="/user">
-            <i className="fa fa-user-circle"></i>
-            Sign In
-          </Link>
-        </div>
-      </nav>
       <main>
         <div className="hero">
           <section className="hero-content">
@@ -66,9 +48,6 @@ const Home = () => {
           </div>
         </section>
       </main>
-      <footer className="footer">
-        <p className="footer-text">Copyright 2020 Argent Bank</p>
-      </footer>
     </div>
   );
 };
