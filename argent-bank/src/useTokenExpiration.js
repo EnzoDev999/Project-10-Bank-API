@@ -17,9 +17,6 @@ const useTokenExpiration = () => {
       const expirationDate = new Date(expiration);
       const currentDate = new Date();
       const isExpired = currentDate >= expirationDate;
-      console.log(
-        `Token expiration check: currentDate=${currentDate}, expirationDate=${expirationDate}, isExpired=${isExpired}`
-      );
       return isExpired;
     };
 

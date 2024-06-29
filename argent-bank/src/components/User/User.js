@@ -5,6 +5,13 @@ import { useNavigate, Link } from "react-router-dom";
 import Header from "../Header/Header";
 import "./User.css";
 
+const formatAmount = (amount) => {
+  return amount.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
+
 const User = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -86,7 +93,9 @@ const User = () => {
         <section className="account">
           <div className="account-content-wrapper">
             <h3 className="account-title">Argent Bank Checking (x8349)</h3>
-            <p className="account-amount">${user.checkingBalance}</p>
+            <p className="account-amount">
+              ${formatAmount(user.checkingBalance)}
+            </p>
             <p className="account-amount-description">Available Balance</p>
           </div>
           <div className="account-content-wrapper cta">
@@ -101,7 +110,9 @@ const User = () => {
         <section className="account">
           <div className="account-content-wrapper">
             <h3 className="account-title">Argent Bank Savings (x6712)</h3>
-            <p className="account-amount">${user.savingsBalance}</p>
+            <p className="account-amount">
+              ${formatAmount(user.savingsBalance)}
+            </p>
             <p className="account-amount-description">Available Balance</p>
           </div>
           <div className="account-content-wrapper cta">
@@ -116,7 +127,9 @@ const User = () => {
         <section className="account">
           <div className="account-content-wrapper">
             <h3 className="account-title">Argent Bank Credit Card (x8349)</h3>
-            <p className="account-amount">${user.creditBalance}</p>
+            <p className="account-amount">
+              ${formatAmount(user.creditBalance)}
+            </p>
             <p className="account-amount-description">Current Balance</p>
           </div>
           <div className="account-content-wrapper cta">

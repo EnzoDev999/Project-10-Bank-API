@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
     password: String,
     firstName: String,
     lastName: String,
+    role: { type: String, default: "user" },
     checkingBalance: {
       type: Number,
       default: Math.floor(Math.random() * 3001) + 2000,

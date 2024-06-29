@@ -18,10 +18,13 @@ module.exports.getAllTransactions = async (req, res) => {
 
 module.exports.getTransactionsForCurrentMonth = async (req, res) => {
   try {
-    const token = req.headers.authorization.split("Bearer ")[1].trim();
-    const decodedToken = jwt.decode(token);
-    const userId = decodedToken.id;
-    const { accountType } = req.query;
+    const { userId, accountType } = req.query;
+
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ status: "fail", message: "User ID is required" });
+    }
 
     const now = new Date();
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -49,11 +52,10 @@ module.exports.getTransactionsForCurrentMonth = async (req, res) => {
 
 module.exports.createTransaction = async (req, res) => {
   try {
-    const token = req.headers.authorization.split("Bearer ")[1].trim();
-    const decodedToken = jwt.decode(token);
-    const userId = decodedToken.id;
+    const { amount, type, description, userId, accountType } = req.body;
 
-    const { amount, type, description, date, accountType } = req.body;
+    // Log pour vérifier les données reçues
+    console.log("Creating transaction with data:", req.body);
 
     // Find the user's current balance for the given account type
     const user = await User.findById(userId);
@@ -79,7 +81,7 @@ module.exports.createTransaction = async (req, res) => {
       amount,
       type,
       description,
-      date,
+      date: new Date(),
       balanceAfterTransaction: newBalance,
       accountType,
     });
@@ -139,20 +141,20 @@ module.exports.deleteTransaction = async (req, res) => {
 
     // Récupérer toutes les transactions après celle qui a été supprimée
     const subsequentTransactions = await Transaction.find({
-      userId,
+      userId: transactionToDelete.userId, // Utiliser transactionToDelete.userId
       accountType: transactionToDelete.accountType,
       date: { $gt: transactionToDelete.date },
     }).sort("date");
 
-    // Ajouter le montant de la transaction supprimée aux balances des transactions suivantes
+    // Ajouter le montant de la transaction supprimée aux soldes des transactions suivantes
     const amountToAdd = transactionToDelete.amount;
     for (let tx of subsequentTransactions) {
       tx.balanceAfterTransaction += amountToAdd;
       await tx.save();
     }
 
-    // Mettre à jour la balance de l'utilisateur
-    const user = await User.findById(userId);
+    // Mettre à jour le solde de l'utilisateur
+    const user = await User.findById(transactionToDelete.userId); // Utiliser transactionToDelete.userId
     switch (transactionToDelete.accountType) {
       case "checking":
         user.checkingBalance += amountToAdd;

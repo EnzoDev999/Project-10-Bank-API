@@ -16,6 +16,7 @@ module.exports.createUser = async (serviceData) => {
       password: hashPassword,
       firstName: serviceData.firstName,
       lastName: serviceData.lastName,
+      role: serviceData.role || "user", // Accepter le rôle ou par défaut "user"
     });
 
     let result = await newUser.save();
@@ -39,7 +40,11 @@ module.exports.getUserProfile = async (serviceData) => {
       throw new Error("User not found!");
     }
 
-    return user.toObject();
+    // On s'assure que l'objet utilisateur contient bien l'ID
+    const userObject = user.toObject();
+    userObject._id = user._id.toString(); // Convertir ObjectId en string si nécessaire
+
+    return userObject;
   } catch (error) {
     console.error("Error in userService.js", error);
     throw new Error(error);

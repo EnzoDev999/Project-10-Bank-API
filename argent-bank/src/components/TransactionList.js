@@ -6,7 +6,6 @@ import {
   setAccountType,
 } from "../slices/transactionSlice";
 import { loadUser } from "../slices/authSlice";
-import AddTransaction from "./AddTransaction";
 import TransactionItem from "./TransactionItem";
 import Header from "./Header/Header";
 import {
@@ -15,6 +14,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import "./Transactions.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+// Fonction de formatage
+const formatAmount = (amount) => {
+  return amount.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
 
 const TransactionsList = () => {
   const dispatch = useDispatch();
@@ -42,11 +49,16 @@ const TransactionsList = () => {
   }, [location.search, dispatch]);
 
   useEffect(() => {
-    if (accountType && userStatus === "succeeded") {
-      dispatch(fetchTransactionsForCurrentMonth(accountType));
+    console.log("User:", user);
+    console.log("User ID:", user?._id);
+    if (accountType && userStatus === "succeeded" && user && user._id) {
+      console.log("Fetching transactions for userId:", user._id);
+      dispatch(
+        fetchTransactionsForCurrentMonth({ userId: user._id, accountType })
+      );
       navigate({ search: `?accountType=${accountType}` }, { replace: true });
     }
-  }, [dispatch, accountType, userStatus, navigate]);
+  }, [dispatch, accountType, userStatus, user, navigate]);
 
   const handlePrevAccount = () => {
     const types = ["checking", "savings", "credit"];
@@ -103,7 +115,7 @@ const TransactionsList = () => {
             onClick={handlePrevAccount}
             className="left-arrow"
           />
-          <span>${getCurrentBalance()}</span>
+          <span>${formatAmount(getCurrentBalance())}</span>
           <FontAwesomeIcon
             icon={faChevronRight}
             onClick={handleNextAccount}
@@ -113,7 +125,6 @@ const TransactionsList = () => {
         <span className="balance-desc">Available Balance</span>
       </div>
       <section className="transactions">
-        <AddTransaction />
         <div className="transactions-container">
           <div className="transactions-header"></div> {/* Empty header cell */}
           <div className="transactions-header">DATE</div>

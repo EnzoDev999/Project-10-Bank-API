@@ -17,31 +17,6 @@ export const fetchTransactions = createAsyncThunk(
   }
 );
 
-export const addTransaction = createAsyncThunk(
-  "transactions/addTransaction",
-  async (transaction, { getState, dispatch }) => {
-    const token = getState().auth.token;
-    const accountType = getState().transactions.accountType; // Récupérer le type de compte actuel
-    console.log("Transaction à envoyer :", transaction);
-    const response = await axios.post(
-      "http://localhost:3001/api/v1/transactions",
-      { ...transaction, accountType }, // Ajouter le type de compte à la transaction
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log("Transaction ajoutée :", response.data.data); // Log de la nouvelle transaction
-    console.log(
-      "Description de la transaction ajoutée :",
-      response.data.data.description
-    ); // Log de la description ajoutée
-    await dispatch(fetchTransactionsForCurrentMonth(accountType));
-    return response.data.data; // Utiliser data au lieu de body
-  }
-);
-
 export const updateTransaction = createAsyncThunk(
   "transactions/updateTransaction",
   async (transaction, { getState, dispatch }) => {
@@ -81,18 +56,23 @@ export const deleteTransaction = createAsyncThunk(
 
 export const fetchTransactionsForCurrentMonth = createAsyncThunk(
   "transactions/fetchTransactionsForCurrentMonth",
-  async (accountType, { getState, rejectWithValue }) => {
+  async ({ userId, accountType }, { getState, rejectWithValue }) => {
     const token = getState().auth.token;
-    const user = getState().auth.user;
 
-    if (!user) {
-      console.log("User not loaded");
-      return rejectWithValue("User not loaded");
+    console.log(
+      "Fetching transactions for userId:",
+      userId,
+      "accountType:",
+      accountType
+    );
+
+    if (!userId) {
+      return rejectWithValue("User ID is required");
     }
 
     try {
       const response = await axios.get(
-        `http://localhost:3001/api/v1/transactions/current-month?accountType=${accountType}`,
+        `http://localhost:3001/api/v1/transactions/current-month?accountType=${accountType}&userId=${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -101,16 +81,18 @@ export const fetchTransactionsForCurrentMonth = createAsyncThunk(
       );
       const transactions = response.data.data;
 
+      console.log("Fetched transactions:", transactions);
+
       let currentBalance;
       switch (accountType) {
         case "checking":
-          currentBalance = user.checkingBalance;
+          currentBalance = getState().auth.user.checkingBalance;
           break;
         case "savings":
-          currentBalance = user.savingsBalance;
+          currentBalance = getState().auth.user.savingsBalance;
           break;
         case "credit":
-          currentBalance = user.creditBalance;
+          currentBalance = getState().auth.user.creditBalance;
           break;
         default:
           currentBalance = 0;
@@ -119,16 +101,14 @@ export const fetchTransactionsForCurrentMonth = createAsyncThunk(
       const transactionsWithBalance = transactions.map((transaction, index) => {
         const transactionWithBalance = {
           ...transaction,
-          balance: currentBalance, // modification ici
+          balance: currentBalance,
         };
-        currentBalance -= transaction.amount; // La balance est soustraite ici une seule fois
+        currentBalance -= transaction.amount;
         return transactionWithBalance;
       });
 
-      // Ajout un délai artificiel ici
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
       console.log("Transactions with balance:", transactionsWithBalance);
+
       return transactionsWithBalance;
     } catch (error) {
       console.log("Error fetching transactions:", error);
@@ -163,10 +143,10 @@ const transactionSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       })
-      .addCase(addTransaction.fulfilled, (state, action) => {
-        state.transactions.unshift(action.payload);
-        state.status = "idle"; // Recharger la liste des transactions
-      })
+      // .addCase(addTransaction.fulfilled, (state, action) => {
+      //   state.transactions.unshift(action.payload);
+      //   state.status = "idle"; // Recharger la liste des transactions
+      // })
       .addCase(updateTransaction.fulfilled, (state, action) => {
         const index = state.transactions.findIndex(
           (transaction) => transaction._id === action.payload._id

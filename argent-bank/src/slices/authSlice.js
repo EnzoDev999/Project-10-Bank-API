@@ -98,6 +98,7 @@ export const loadUser = () => async (dispatch, getState) => {
     );
     dispatch(userLoaded(response.data.body));
   } catch (error) {
+    console.log("Error loading user:", error); // Ajoutez ce log
     dispatch(userLoadFailed(error.response.data.message));
   }
 };

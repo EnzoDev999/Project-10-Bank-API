@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   updateTransaction,
-  deleteTransaction,
   fetchTransactionsForCurrentMonth,
 } from "../slices/transactionSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,6 +11,13 @@ import {
   faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import "./Transactions.css";
+
+const formatAmount = (amount) => {
+  return amount.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
 
 const TransactionItem = ({ transaction }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -30,11 +36,6 @@ const TransactionItem = ({ transaction }) => {
     await dispatch(fetchTransactionsForCurrentMonth(transaction.accountType));
     setIsEditingCategory(false);
     setIsEditingNotes(false);
-  };
-
-  const handleDelete = async () => {
-    await dispatch(deleteTransaction(transaction._id));
-    await dispatch(fetchTransactionsForCurrentMonth(transaction.accountType));
     window.location.reload();
   };
 
@@ -61,10 +62,6 @@ const TransactionItem = ({ transaction }) => {
     month: "long",
     day: "numeric",
   });
-  console.log(
-    "Description de la transaction affichée :",
-    transaction.description
-  ); // Log de la description affichée
   return (
     <>
       <div
@@ -76,8 +73,8 @@ const TransactionItem = ({ transaction }) => {
         </div>
         <div>{formattedDate}</div> {/* Use the formatted date here */}
         <div>{transaction.description}</div>
-        <div>${transaction.amount}</div>
-        <div>${transaction.balanceAfterTransaction}</div>
+        <div>${formatAmount(transaction.amount)}</div>
+        <div>${formatAmount(transaction.balanceAfterTransaction)}</div>
       </div>
       {isExpanded && (
         <div className="transaction-details">
@@ -131,7 +128,6 @@ const TransactionItem = ({ transaction }) => {
               </span>
             )}
           </div>
-          <button onClick={handleDelete}>Delete</button>
         </div>
       )}
     </>

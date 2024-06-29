@@ -1,8 +1,18 @@
 const express = require("express");
 const transactionController = require("../controllers/transactionController");
-const { validateToken } = require("../middleware/tokenValidation");
+const {
+  validateToken,
+  requireAdmin,
+} = require("../middleware/tokenValidation");
 
 const router = express.Router();
+
+router.post(
+  "/transactions",
+  validateToken,
+  requireAdmin, // Assurez-vous que seuls les admins peuvent créer des transactions
+  transactionController.createTransaction
+);
 
 router.get(
   "/transactions",
@@ -14,12 +24,6 @@ router.get(
   "/transactions/current-month",
   validateToken,
   transactionController.getTransactionsForCurrentMonth
-);
-
-router.post(
-  "/transactions",
-  validateToken,
-  transactionController.createTransaction
 );
 
 router.put(
