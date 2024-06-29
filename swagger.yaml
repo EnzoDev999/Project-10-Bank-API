@@ -58,7 +58,7 @@ paths:
         "500":
           description: Internal Server Error
   /user/profile:
-    post:
+    get:
       security:
         - Bearer: []
       tags:
@@ -68,6 +68,7 @@ paths:
       parameters:
         - in: header
           name: Authorization
+          type: string
           description: Attach Bearer JWT token
           required: true
       produces:
@@ -76,7 +77,7 @@ paths:
         "200":
           description: User profile retrieved successully
           schema:
-            $ref: "#/definitions/ApiResponse"
+            $ref: "#/definitions/UserProfileResponse"
         "400":
           description: Invalid Fields
         "500":
@@ -86,11 +87,12 @@ paths:
         - Bearer: []
       tags:
         - User Module
-      summary: User Profile API
+      summary: Update User Profile
       description: API for updating a user profile
       parameters:
         - in: header
           name: Authorization
+          type: string
           description: Attach Bearer JWT token
           required: true
         - in: body
@@ -103,9 +105,9 @@ paths:
         - application/json
       responses:
         "200":
-          description: User profile retrieved successully
+          description: User profile updated successully
           schema:
-            $ref: "#/definitions/ApiResponse"
+            $ref: "#/definitions/UserProfileResponse"
         "400":
           description: Invalid Fields
         "500":
@@ -156,6 +158,38 @@ paths:
           description: Invalid Fields
         "500":
           description: Internal Server Error
+  /transactions/current-month:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Transaction Module
+      summary: Get current month transactions
+      description: Returns transactions for the authenticated user for the current month
+      parameters:
+        - in: query
+          name: accountType
+          description: Type of the account
+          required: true
+          type: string
+        - in: query
+          name: userId
+          description: ID of the user
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: A list of transactions
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Transaction"
+        "400":
+          description: Invalid Fields
+        "500":
+          description: Internal Server Error
   /transactions/{transactionId}:
     get:
       security:
@@ -189,7 +223,7 @@ paths:
       tags:
         - Transaction Module
       summary: Update a transaction
-      description: Updates an existing transaction
+      description: Updates the category and notes of an existing transaction
       parameters:
         - in: path
           name: transactionId
@@ -201,7 +235,7 @@ paths:
           description: Update transaction attributes
           required: true
           schema:
-            $ref: "#/definitions/TransactionInput"
+            $ref: "#/definitions/TransactionUpdateInput"
       produces:
         - application/json
       responses:
@@ -293,6 +327,28 @@ definitions:
         type: string
       lastName:
         type: string
+  UserProfileResponse:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+      body:
+        type: object
+        properties:
+          firstName:
+            type: string
+          lastName:
+            type: string
+          email:
+            type: string
+          checkingBalance:
+            type: number
+          savingsBalance:
+            type: number
+          creditBalance:
+            type: number
   Transaction:
     type: object
     properties:
@@ -309,12 +365,37 @@ definitions:
       date:
         type: string
         format: date-time
+      accountType:
+        type: string
+      balanceAfterTransaction:
+        type: number
+      category:
+        type: string
+      notes:
+        type: string
   TransactionInput:
     type: object
+    required:
+      - amount
+      - type
+      - description
+      - userId
+      - accountType
     properties:
       amount:
         type: number
       type:
         type: string
       description:
+        type: string
+      userId:
+        type: string
+      accountType:
+        type: string
+  TransactionUpdateInput:
+    type: object
+    properties:
+      category:
+        type: string
+      notes:
         type: string

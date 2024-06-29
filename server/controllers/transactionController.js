@@ -16,14 +16,36 @@ module.exports.getAllTransactions = async (req, res) => {
   }
 };
 
+module.exports.getTransactionById = async (req, res) => {
+  try {
+    const transactionId = req.params.transactionId;
+    const transaction = await Transaction.findById(transactionId);
+
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // Vérifiez si l'utilisateur est administrateur ou propriétaire de la transaction
+    if (
+      req.userRole !== "admin" &&
+      transaction.userId.toString() !== req.userId.toString()
+    ) {
+      return res.status(403).json({ message: "Access Denied" });
+    }
+
+    res.status(200).json({ data: transaction });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports.getTransactionsForCurrentMonth = async (req, res) => {
   try {
     const { userId, accountType } = req.query;
 
-    if (!userId) {
-      return res
-        .status(400)
-        .json({ status: "fail", message: "User ID is required" });
+    // Vérification du rôle et des autorisations
+    if (req.userRole !== "admin" && req.userId.toString() !== userId) {
+      return res.status(403).json({ message: "Access Denied" });
     }
 
     const now = new Date();
@@ -111,12 +133,20 @@ module.exports.createTransaction = async (req, res) => {
 
 module.exports.updateTransaction = async (req, res) => {
   try {
+    const transactionId = req.params.transactionId;
     const { category, notes } = req.body;
     const transaction = await Transaction.findByIdAndUpdate(
       req.params.transactionId,
       { category, notes },
       { new: true }
     );
+
+    if (
+      req.userRole !== "admin" &&
+      transaction.userId.toString() !== req.userId.toString()
+    ) {
+      return res.status(403).json({ message: "Access Denied" });
+    }
     res.status(200).json({ data: transaction });
   } catch (error) {
     res.status(400).json({ message: error.message });

@@ -10,7 +10,7 @@ const router = express.Router();
 router.post(
   "/transactions",
   validateToken,
-  requireAdmin, // Assurez-vous que seuls les admins peuvent créer des transactions
+  requireAdmin,
   transactionController.createTransaction
 );
 
@@ -26,6 +26,12 @@ router.get(
   transactionController.getTransactionsForCurrentMonth
 );
 
+router.get(
+  "/transactions/:transactionId",
+  validateToken,
+  transactionController.getTransactionById
+);
+
 router.put(
   "/transactions/:transactionId",
   validateToken,
@@ -35,6 +41,7 @@ router.put(
 router.delete(
   "/transactions/:transactionId",
   validateToken,
+  requireAdmin,
   transactionController.deleteTransaction
 );
 

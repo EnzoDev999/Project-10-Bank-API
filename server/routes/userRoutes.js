@@ -16,6 +16,6 @@ router.put(
   tokenValidation.validateToken,
   userController.updateUserProfile
 );
-router.get("/", userController.getAllUsers); // Assurez-vous que getAllUsers est bien défini dans userController
+router.get("/", userController.getAllUsers);
 
 module.exports = router;
