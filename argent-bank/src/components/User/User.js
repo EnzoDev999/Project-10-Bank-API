@@ -87,58 +87,60 @@ const User = () => {
             </button>
           </form>
         )}
-        <h2 className="sr-only">Accounts</h2>
-        <section className="account">
-          <div className="account-content-wrapper">
-            <h3 className="account-title">Argent Bank Checking (x8349)</h3>
-            <p className="account-amount">
-              ${formatAmount(user.checkingBalance)}
-            </p>
-            <p className="account-amount-description">Available Balance</p>
-          </div>
-          <div className="account-content-wrapper cta">
-            <Link
-              className="transaction-button"
-              to="/transactions?accountType=checking"
-            >
-              View transactions
-            </Link>
-          </div>
-        </section>
-        <section className="account">
-          <div className="account-content-wrapper">
-            <h3 className="account-title">Argent Bank Savings (x6712)</h3>
-            <p className="account-amount">
-              ${formatAmount(user.savingsBalance)}
-            </p>
-            <p className="account-amount-description">Available Balance</p>
-          </div>
-          <div className="account-content-wrapper cta">
-            <Link
-              className="transaction-button"
-              to="/transactions?accountType=savings"
-            >
-              View transactions
-            </Link>
-          </div>
-        </section>
-        <section className="account">
-          <div className="account-content-wrapper">
-            <h3 className="account-title">Argent Bank Credit Card (x8349)</h3>
-            <p className="account-amount">
-              ${formatAmount(user.creditBalance)}
-            </p>
-            <p className="account-amount-description">Current Balance</p>
-          </div>
-          <div className="account-content-wrapper cta">
-            <Link
-              className="transaction-button"
-              to="/transactions?accountType=credit"
-            >
-              View transactions
-            </Link>
-          </div>
-        </section>
+        <h2 className="sr-only">Accounts</h2> {/* For Assistance Technology */}
+        <div class="accounts-container">
+          <section className="account">
+            <div className="account-content-wrapper">
+              <h3 className="account-title">Argent Bank Checking (x8349)</h3>
+              <p className="account-amount">
+                ${formatAmount(user.checkingBalance)}
+              </p>
+              <p className="account-amount-description">Available Balance</p>
+            </div>
+            <div className="account-content-wrapper cta">
+              <Link
+                className="transaction-button"
+                to="/transactions?accountType=checking"
+              >
+                View transactions
+              </Link>
+            </div>
+          </section>
+          <section className="account">
+            <div className="account-content-wrapper">
+              <h3 className="account-title">Argent Bank Savings (x6712)</h3>
+              <p className="account-amount">
+                ${formatAmount(user.savingsBalance)}
+              </p>
+              <p className="account-amount-description">Available Balance</p>
+            </div>
+            <div className="account-content-wrapper cta">
+              <Link
+                className="transaction-button"
+                to="/transactions?accountType=savings"
+              >
+                View transactions
+              </Link>
+            </div>
+          </section>
+          <section className="account">
+            <div className="account-content-wrapper">
+              <h3 className="account-title">Argent Bank Credit Card (x8349)</h3>
+              <p className="account-amount">
+                ${formatAmount(user.creditBalance)}
+              </p>
+              <p className="account-amount-description">Current Balance</p>
+            </div>
+            <div className="account-content-wrapper cta">
+              <Link
+                className="transaction-button"
+                to="/transactions?accountType=credit"
+              >
+                View transactions
+              </Link>
+            </div>
+          </section>
+        </div>
       </main>
     </div>
   );

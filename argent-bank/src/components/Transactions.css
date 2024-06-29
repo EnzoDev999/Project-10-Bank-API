@@ -14,6 +14,12 @@ body{
   border: 1px solid lightgrey;
 }
 
+@media (max-width: 565px){
+  .account-informations h2 {
+    font-size: 19px;
+  }
+}
+
 .account-navigation{
   margin-bottom: 15px;
 }
@@ -22,6 +28,11 @@ body{
   font-weight: bold;
   font-size: 30px;
 }
+@media (max-width: 565px){
+  .account-navigation span {
+    font-size: 23px;
+  }
+}
 
 .account-navigation .left-arrow, .right-arrow {
   font-size: 25px;
@@ -29,8 +40,19 @@ body{
   cursor: pointer;
   margin: 0px 60px 0 60px;
 }
+@media (max-width: 565px){
+  .account-navigation .left-arrow, .right-arrow {
+    font-size: 19px;
+  }
+}
+
 .balance-desc{
   margin-bottom: 15px;
+}
+@media (max-width: 565px){
+  .balance-desc {
+    font-size: 14px;
+  }
 }
 .transactions {
   max-width: 800px;
@@ -45,6 +67,12 @@ body{
   margin-top: 50px;
 }
 
+@media (max-width: 565px) {
+  .transactions-container {
+    grid-template-columns: 20px 1fr 2fr 1fr 1fr;
+  }
+}
+
 .transactions-header {
   padding: 10px;
   text-align: center;
@@ -52,7 +80,11 @@ body{
   font-size: 18px;
   color: #0B0C10;
 }
-
+@media (max-width: 565px){
+  .transactions-header {
+    font-size: 15px;
+  }
+}
 .transactions-header div:first-child {
   text-align: left; /* Align the first empty cell to the left */
 }
@@ -60,7 +92,6 @@ body{
 .transaction-summary {
   display: contents;
 }
-
 .transaction-summary .icon-container {
   display: flex;
   align-items: center;
@@ -82,7 +113,11 @@ body{
   font-size: 18px;
   color: #0B0C10;
 }
-
+@media (max-width: 565px){
+  .transaction-summary div {
+    font-size: 14px;
+  }
+}
 .transaction-summary.expanded div {
   border-bottom: none; /* Remove bottom border when expanded */
 }
@@ -114,7 +149,11 @@ body{
   padding-left: 45px;
   font-size: 18px;
 }
-
+@media (max-width: 565px){
+  .transaction-details div {
+    font-size: 15px;
+  }
+}
 .transaction-details div span {
   padding-right: 3px;
 }
@@ -159,4 +198,10 @@ body{
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 4px;
+}
+@media (max-width: 565px){
+  .no-transactions {
+    font-size: 14px;
+    padding: 15px;
+  }
 }

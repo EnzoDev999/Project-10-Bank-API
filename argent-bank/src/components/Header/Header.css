@@ -38,4 +38,14 @@
     font-size: 25px;
   }
   
-  
+  @media (max-width: 565px){
+    .main-nav-logo img{
+      width: 100px;
+    }
+    .main-nav-item svg{
+      font-size: 20px;
+    }
+    .main-nav-item{
+      font-size: 14px;
+    }
+  }

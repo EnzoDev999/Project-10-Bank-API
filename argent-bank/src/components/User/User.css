@@ -76,6 +76,15 @@ body {
   }
 
   /* Account Section Styles */
+
+  .accounts-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 70px;
+  }
+
   .account {
     background-color: #fff;
     padding: 1.5rem;
@@ -89,6 +98,12 @@ body {
     box-sizing: border-box;
     text-align: left;
     margin-bottom: 2rem;
+  }
+
+  @media (max-width: 565px){
+    .account{
+      flex-direction: column;
+    }
   }
   
   .account .account-content-wrapper {
@@ -131,6 +146,14 @@ body {
     align-items: center;
   }
   
+  @media (max-width: 565px){
+    .account .cta .transaction-button{
+      width: 125px;
+      margin-top: 15px;
+      font-size: 0.95rem;
+    }
+  }
+
   .account .cta .transaction-button:hover {
     background-color: #3b52d4;
   }
