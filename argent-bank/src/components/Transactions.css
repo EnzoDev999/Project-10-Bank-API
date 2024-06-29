@@ -1,10 +1,25 @@
-body{
-  background-color: #DFE9EE;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   font-family: Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #DFE9EE;
 }
-.account-informations{
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.account-informations {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,21 +29,22 @@ body{
   border: 1px solid lightgrey;
 }
 
-@media (max-width: 565px){
+@media (max-width: 565px) {
   .account-informations h2 {
     font-size: 19px;
   }
 }
 
-.account-navigation{
+.account-navigation {
   margin-bottom: 15px;
 }
 
-.account-navigation span{
+.account-navigation span {
   font-weight: bold;
   font-size: 30px;
 }
-@media (max-width: 565px){
+
+@media (max-width: 565px) {
   .account-navigation span {
     font-size: 23px;
   }
@@ -40,25 +56,30 @@ body{
   cursor: pointer;
   margin: 0px 60px 0 60px;
 }
-@media (max-width: 565px){
+
+@media (max-width: 565px) {
   .account-navigation .left-arrow, .right-arrow {
     font-size: 19px;
   }
 }
 
-.balance-desc{
+.balance-desc {
   margin-bottom: 15px;
 }
-@media (max-width: 565px){
+
+@media (max-width: 565px) {
   .balance-desc {
     font-size: 14px;
   }
 }
+
 .transactions {
   max-width: 800px;
   margin: 60px auto 0 auto;
   border-radius: 4px;
-  background-color: #f9f9f9;
+  padding-bottom: 70px; /* Ajouté pour tenir compte du footer */
+  min-height: calc(100vh - 120px); /* Ajouté pour garantir une hauteur minimale */
+  box-sizing: border-box;
 }
 
 .transactions-container {
@@ -69,7 +90,7 @@ body{
 
 @media (max-width: 565px) {
   .transactions-container {
-    grid-template-columns: 20px 1fr 2fr 1fr 1fr;
+    grid-template-columns: 18px 1fr 2fr 1fr 1fr;
   }
 }
 
@@ -80,18 +101,21 @@ body{
   font-size: 18px;
   color: #0B0C10;
 }
-@media (max-width: 565px){
+
+@media (max-width: 565px) {
   .transactions-header {
     font-size: 15px;
   }
 }
+
 .transactions-header div:first-child {
-  text-align: left; /* Align the first empty cell to the left */
+  text-align: left;
 }
 
 .transaction-summary {
   display: contents;
 }
+
 .transaction-summary .icon-container {
   display: flex;
   align-items: center;
@@ -113,13 +137,15 @@ body{
   font-size: 18px;
   color: #0B0C10;
 }
-@media (max-width: 565px){
+
+@media (max-width: 565px) {
   .transaction-summary div {
     font-size: 14px;
   }
 }
+
 .transaction-summary.expanded div {
-  border-bottom: none; /* Remove bottom border when expanded */
+  border-bottom: none;
 }
 
 .transaction-summary div:first-child {
@@ -149,25 +175,28 @@ body{
   padding-left: 45px;
   font-size: 18px;
 }
-@media (max-width: 565px){
+
+@media (max-width: 565px) {
   .transaction-details div {
     font-size: 15px;
   }
 }
+
 .transaction-details div span {
   padding-right: 3px;
 }
- .transaction-details-icon{
+
+.transaction-details-icon {
   margin-left: 15px;
   cursor: pointer;
- }
+}
 
 .balance {
   color: #2185d0;
   font-weight: bold;
 }
 
- /* LOADING ANIMATION */
+/* LOADING ANIMATION */
 
 .loading-spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
@@ -199,7 +228,8 @@ body{
   border: 1px solid #ddd;
   border-radius: 4px;
 }
-@media (max-width: 565px){
+
+@media (max-width: 565px) {
   .no-transactions {
     font-size: 14px;
     padding: 15px;

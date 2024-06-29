@@ -104,7 +104,7 @@ const TransactionsList = () => {
   }
 
   return (
-    <div>
+    <div className="container">
       <div className="account-informations">
         <h2>Argent Bank {accountType}</h2>
         <div className="account-navigation">
