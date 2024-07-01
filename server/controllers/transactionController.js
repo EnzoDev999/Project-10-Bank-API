@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken");
 
 module.exports.getAllTransactions = async (req, res) => {
   try {
-    const transactions = await transactionService.getAllTransactions(req);
+    const { userId } = req.query;
+    const transactions = await transactionService.getAllTransactions(userId);
     if (!transactions || transactions.length === 0) {
       return res.status(404).send({ message: "No transactions found" });
     }

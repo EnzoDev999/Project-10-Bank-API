@@ -63,3 +63,14 @@ module.exports.deleteTransaction = async (transactionId) => {
     throw new Error(error);
   }
 };
+
+module.exports.getAllTransactions = async (userId) => {
+  try {
+    const filter = userId ? { userId } : {};
+    const transactions = await Transaction.find(filter);
+    return transactions;
+  } catch (error) {
+    console.error("Error in getAllTransactions:", error);
+    throw new Error(error);
+  }
+};

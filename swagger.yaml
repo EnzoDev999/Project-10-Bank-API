@@ -120,6 +120,12 @@ paths:
         - Transaction Module
       summary: Get all transactions
       description: Returns all transactions for the authenticated user
+      parameters:
+        - in: query
+          name: userId
+          description: ID of the user to fetch transactions for
+          required: true
+          type: string
       produces:
         - application/json
       responses:

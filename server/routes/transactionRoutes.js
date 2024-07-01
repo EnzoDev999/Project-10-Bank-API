@@ -17,6 +17,7 @@ router.post(
 router.get(
   "/transactions",
   validateToken,
+  requireAdmin,
   transactionController.getAllTransactions
 );
 
